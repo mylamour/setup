@@ -18,5 +18,6 @@ pip3 install ansible awscli
 cd up
 ./start.sh -r init
 ./start.sh -r runtime docker
-./start.sh --shell
+./start.sh -r shell ls -al
+./start.sh -s
 ```

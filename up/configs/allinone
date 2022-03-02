@@ -1,7 +1,13 @@
 #!/bin/bash
 # Install all tools with docker, and export data to local
 
-DOMAINNAME="whark.cn"
+# DOMAINNAME="whark.cn"
 
-mkdir osmws
-docker run -it --rm -v osmws:/root/.osmedeus/workspaces j3ssie/osmedeus:latest scan -f fast -t $DOMAINNAME
+# mkdir osmws
+# docker run -it --rm -v osmws:/root/.osmedeus/workspaces j3ssie/osmedeus:latest scan -f fast -t $DOMAINNAME
+
+scan()
+{
+    # find sub domain & path
+    
+}

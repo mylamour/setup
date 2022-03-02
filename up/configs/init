@@ -8,11 +8,12 @@
 # systemctl reload sshd
 
 
+
 # Install Building Essential and Basic Tools
 echo "Install Building Essential"
-sudo apt-get update 
-sudo apt-get install -y build-essential tmux git python3 python3-pip
-
+sudo apt-get update > /dev/null
+sudo apt-get install -y build-essential tmux git python3 python3-pip python3-tqdm > /dev/null
+echo "Installed"
 
 # TODO: Secret & Identity Management
 # how to get remote token dynamiclly

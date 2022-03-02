@@ -3,7 +3,7 @@ variable "region" {
 }
 
 variable "instancetype" {
-    default = "t3.micro"
+    default = "t2.micro"
 }
 
 variable "securitygroup" {

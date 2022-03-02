@@ -5,6 +5,7 @@
 *.lock.hcl
 *.tfstate
 *.tfstate.backup
+*.tfstate.lock.info
 playbooks
 runenv
 try/

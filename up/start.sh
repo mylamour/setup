@@ -88,7 +88,7 @@ then
    
     command="sudo nohup bash /tmp/${modfile} ${otherargs} &"
 
-    ssh ubuntu@${newip} ${command}
+    ssh -o StrictHostKeyChecking=no -o LogLevel=quiet ubuntu@${newip} ${command}
 
     # ansible all -i $newip, -m shell -a "${command}" --user=ubuntu 
     # ssh -o StrictHostKeyChecking=no -l ubuntu $newip

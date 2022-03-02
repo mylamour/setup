@@ -11,6 +11,16 @@ install_rust()
 
 } 
 
+install_java()
+{
+    echo "Install Java"
+}
+
+install_nodejs()
+{
+    echo "Intall Node"
+}
+
 install_docker()
 {
     echo "Install Docker"
@@ -35,7 +45,7 @@ then
     fi;
 
     if [ "${1}" = "docker" ]; then 
-        install_docker
+        install_docker > /dev/null
     fi;
 
 else
