@@ -1,14 +1,19 @@
 #!/bin/bash
 
-echo "Install requirement"
+# Install Building Essential and Basic Tools
+echo "Install Building Essential"
 sudo apt-get update 
 sudo apt-get install -y build-essential tmux git python3 python3-pip
 
-# echo "Install Docker"
-# sudo apt-get install -y ca-certificates curl gnupg lsb-release
-# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-# echo \
-#   "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-#   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-# sudo apt-get update
-# sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+
+# TODO: Secret & Identity Management
+# how to get remote token dynamiclly
+
+# TODO: Open Remote Desktop Services
+# basic env config
+
+# TODO: Add Glassed Users
+
+# TODO: Build Data Pipeline
+
+# TODO: Self Checking

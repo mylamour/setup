@@ -1,5 +1,9 @@
 #!/bin/bash
 
+RED=`tput setaf 1`
+GREEN=`tput setaf 2`
+NC=`tput sgr0`
+
 usage()
 {
   (echo "Usage: $0 [options]"
@@ -11,7 +15,7 @@ usage()
 }
 
 destroyit(){
-    echo "Start to Detroy the Infra"
+    echo "${RED}[Warning]${NC}: Start to Detroy the Infra"
     terraform destroy -auto-approve >> .logs
 }
 
@@ -42,6 +46,7 @@ do
       fi
 
       modfile="${2}"
+      otherargs="${*:3}"
 
       shift 1
       ;;
@@ -63,22 +68,28 @@ done
 DIR="$( cd "$( dirname "$0" )" && pwd )" 
 CONFIGDIR="$DIR/configs"
 
+grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' terraform.tfstate > /dev/null
+# check whether if the instances was exists
+if [ $? -eq 0 ]; then
+    # echo "[Info]: Instances Exists"
+    :  # pass
+else
+    echo "${GREEN}[Info]${NC}: Start to Create Instances"
+    terraform apply  -auto-approve >> .logs
+fi
+
 if [ -f $CONFIGDIR/${modfile} ]
 then
-    echo "Start to building the infra with module: ${modfile}"
-    # cat $CONFIGDIR/${modfile} > .tmp.sync.sh
-    
-    terraform apply  -auto-approve >> .logs
+    echo "${GREEN}[Info]${NC}: Start to building the infra with module: ${modfile}"
     
     newip=$(cat .logs | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | tail -n 1)
-    
-    # ansible-playbook playbook/test.yml --tags "${modfile},test"
-    # rm .tmp.sync.sh .logs
 
-    ansible all -i $newip, -m shell -a "sudo nohup bash /tmp/${modfile} &&" --user=ubuntu 
+    # ansible all -i $newip, -m ansible.builtin.script -a "$CONFIGDIR/${modfile} ${otherargs}" --user=ubuntu
+   
+    command="sudo nohup bash /tmp/${modfile} ${otherargs} &"
+    ansible all -i $newip, -m shell -a "${command}" --user=ubuntu 
     # ssh -o StrictHostKeyChecking=no -l ubuntu $newip
 
 else
-    echo "Your Module is Not Exists, Please make sure it was exist in configs folder"
+    echo "${RED}[Error]${NC}: Your Module was Not Exists, Please make sure it was exist in configs folder"
 fi
-
