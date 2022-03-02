@@ -71,8 +71,8 @@ CONFIGDIR="$DIR/configs"
 grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' terraform.tfstate > /dev/null
 # check whether if the instances was exists
 if [ $? -eq 0 ]; then
-    # echo "[Info]: Instances Exists"
-    :  # pass
+    echo "${GREEN}[Info]${NC}: Instances Exists"
+    # :  # pass
 else
     echo "${GREEN}[Info]${NC}: Start to Create Instances"
     terraform apply  -auto-approve >> .logs
@@ -87,7 +87,10 @@ then
     # ansible all -i $newip, -m ansible.builtin.script -a "$CONFIGDIR/${modfile} ${otherargs}" --user=ubuntu
    
     command="sudo nohup bash /tmp/${modfile} ${otherargs} &"
-    ansible all -i $newip, -m shell -a "${command}" --user=ubuntu 
+
+    ssh ubuntu@${newip} ${command}
+
+    # ansible all -i $newip, -m shell -a "${command}" --user=ubuntu 
     # ssh -o StrictHostKeyChecking=no -l ubuntu $newip
 
 else

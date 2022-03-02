@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Ansible Speed Optimization
+# sed  -i  '/^GSSAPI/s/yes/no/g;/UseDNS/d;/Protocol/aUseDNS no' /etc/ssh/sshd_config
+
+# /etc/init.d/sshd restart
+# /usr/sbin/sshd reload
+# systemctl reload sshd
+
+
 # Install Building Essential and Basic Tools
 echo "Install Building Essential"
 sudo apt-get update 

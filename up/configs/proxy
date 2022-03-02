@@ -1,15 +1,17 @@
 #!/bin/bash
 
-install()
+install_proxy()
 {
 echo "Install Proxy"
-# sudo su and enter 
 curl -s -L https://git.io/v2ray.sh > v2ray.sh && chmod +x v2ray.sh && printf '1\n2\ny\ny\n' | sudo ./v2ray.sh
 }
 
 if [ ! -z ${1} ]
 then
-    v2ray ${*:1}
-else
-    echo "wrong command"
+    if [ "${1}" = "install" ]
+    then 
+        install_proxy
+    else
+        sudo v2ray ${*:1}
+    fi
 fi
