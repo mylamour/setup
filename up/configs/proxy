@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "Install proxy"
+# sudo su and enter 
+curl -s -L https://git.io/v2ray.sh > v2ray.sh && chmod +x v2ray.sh && printf '1\n2\ny\ny\n' | sudo ./v2ray.sh
+
+sudo v2ray url

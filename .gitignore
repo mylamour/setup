@@ -1,0 +1,12 @@
+*.pem
+.idea
+.logs
+.terraform
+*.lock.hcl
+*.tfstate
+*.tfstate.backup
+playbooks
+runenv
+try/
+*.py
+ansible.cfg
