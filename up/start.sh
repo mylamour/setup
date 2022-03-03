@@ -100,7 +100,7 @@ then
     
     newip=$(cat .logs | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | tail -n 1)
 
-    rsync $CONFIGDIR/${modfile} ubuntu@${newip}:/tmp/
+    rsync -e "ssh -o StrictHostKeyChecking=no" $CONFIGDIR/${modfile} ubuntu@${newip}:/tmp/
     # ansible all -i $newip, -m ansible.builtin.script -a "$CONFIGDIR/${modfile} ${otherargs}" --user=ubuntu
    
     command="sudo nohup bash /tmp/${modfile} ${otherargs} &"

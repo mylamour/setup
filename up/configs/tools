@@ -59,7 +59,12 @@ install_gitminer()
 install_xrdp()
 {
     echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
-    sudo apt install -y xubuntu-desktop xrdp
+    sudo apt-get install -y xubuntu-desktop xrdp
+    sudo adduser xrdp ssl-cert && sudo systemctl restart xrdp
+    X -configure && X -config /root/xorg.conf.new &
+    #TODO: change xrdp password and change root password
+    # sudo mv /root/xorg.conf.new /etc/X11/xorg.conf
+    # docker run -p 0.0.0.0:6080:80 -e USER=doro -e PASSWORD=password -v /dev/shm:/dev/shm dorowu/ubuntu-desktop-lxde-vnc:focal
 }
 
 install_sn1per()
@@ -75,6 +80,14 @@ install_sn1per()
 
     # docker pull xer0dayz/sn1per
     # docker run -it xer0dayz/sn1per /bin/bash
+}
+
+install_emagent()
+{
+    echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
+    git clone https://github.com/wuseman/EMAGNET && cd EMAGNET && chmod +x emagnet/emagnet.sh
+    # bash emagnet/emagnet.sh --emagnet
+    echo "${GREEN}[Info]${NC}: Installed Successful"
 }
 
 install_osms()
@@ -112,11 +125,17 @@ then
         'sn1per' )
             install_sn1per
         ;;  
+        'xrdp' )
+            install_xrdp
+        ;;  
+        'emag' )
+            install_emagent
+        ;;  
         'gitminer' )
             install_gitminer
         ;;
         *)
-            echo "${RED} [$1] ${NC} was not included"
+            echo "${RED}[Error]${NC}: $1 was not included"
             echo "Supported:"
             typeset -f | awk '/ \(\) $/ && !/^main / {print $1}'
         ;;  

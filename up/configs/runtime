@@ -29,14 +29,15 @@ install_nodejs()
 install_docker()
 {
     echo "Starting to ${FUNCNAME[0]/_/ }"
-    sudo apt-get update
-    sudo apt-get install -y ca-certificates curl gnupg lsb-release
+    sudo apt-get update >/dev/null
+    sudo apt-get install -y ca-certificates curl gnupg lsb-release >/dev/null
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
     echo \
     "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
     $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    sudo apt-get update
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+    sudo apt-get update >/dev/null
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io >/dev/null
+    sudo usermod -aG docker $USER
     echo "Installed Successful"
 }
 
@@ -51,15 +52,15 @@ then
     fi;
 
     if [ "${1}" = "docker" ]; then 
-        install_docker > /dev/null
+        install_docker
     fi;
 
     if [ "${1}" = "nodejs" ]; then 
-        install_nodejs > /dev/null
+        install_nodejs
     fi;
 
     if [ "${1}" = "java" ]; then 
-        install_java > /dev/null
+        install_java
     fi;
 
 
