@@ -2,6 +2,7 @@
 
 RED=`tput setaf 1`
 GREEN=`tput setaf 2`
+YELLOW=`tput setaf 3`
 NC=`tput sgr0`
 
 usage()
@@ -74,13 +75,21 @@ if [ $? -eq 0 ]; then
     echo "${GREEN}[Info]${NC}: Instances Exists"
     # :  # pass
 else
-    echo "${GREEN}[Info]${NC}: Start to Create Instances"
+    echo "${YELLOW}[Info]${NC}: Start to Create Instances"
     terraform apply  -auto-approve >> .logs
+    
+    if [ $? -eq 0 ]; then
+        echo "${GREEN}[Info]${NC}: Instances Created"
+    else
+        echo "${RED}[ERROR]${NC}: Instances Created FAILED, Please Check it now"
+        exit 1
+    fi
+
 fi
 
 if [ -f $CONFIGDIR/${modfile} ]
 then
-    echo "${GREEN}[Info]${NC}: Start to building the infra with module: ${modfile}"
+    echo "${GREEN}[Info]${NC}: Start to building with module: ${modfile}"
     
     newip=$(cat .logs | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | tail -n 1)
 

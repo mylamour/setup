@@ -3,11 +3,15 @@ variable "region" {
 }
 
 variable "instancetype" {
-    default = "t2.micro"
+    default = "t3.micro"
 }
 
 variable "securitygroup" {
     default = "sg-9161f3f7"
+}
+
+variable "rootbolcksize" {
+    default = "20"
 }
 
 variable "modfile" { 

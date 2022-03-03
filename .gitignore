@@ -11,3 +11,4 @@ runenv
 try/
 *.py
 ansible.cfg
+tgbot/

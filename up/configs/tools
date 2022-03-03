@@ -1,0 +1,143 @@
+#!/bin/bash
+
+# use build to run demo code quickly 
+# mainly focus on build script in github
+BASEDIR="/home/ubuntu/"
+
+install_dict()
+{
+    echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
+    mkdir -p dict && cd dict
+    git clone https://github.com/1N3/IntruderPayloads &
+    git clone https://github.com/Bo0oM/fuzz.txt &
+    git clone https://github.com/gh0stkey/Web-Fuzzing-Box &
+    echo "${GREEN}[Info]${NC}: Installed Successful"
+}
+
+install_nuclei()
+{
+    echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
+    wget -q -O nuclei_2.6.2_linux_amd64.zip https://github.com/projectdiscovery/nuclei/releases/download/v2.6.2/nuclei_2.6.2_linux_amd64.zip
+    unzip nuclei_2.6.2_linux_amd64.zip -d nuclei
+    cd nuclei && git clone https://github.com/projectdiscovery/nuclei-templates
+    echo "${GREEN}[Info]${NC}: Installed Successful"
+}
+
+install_rengine()
+{
+    # rengine was all in one platform
+    echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
+    git clone https://github.com/yogeshojha/rengine && cd rengine
+    chmod +x ./install.shell && sudo ./install.sh
+    echo "${GREEN}[Info]${NC}: Installed Successful"
+}
+
+install_zap()
+{
+    echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
+    wget -q -O zap.tar.gz https://github.com/zaproxy/zaproxy/releases/download/v2.11.1/ZAP_2.11.1_Linux.tar.gz
+    tar -xf zap.tar.gz
+    echo "${GREEN}[Info]${NC}: Installed Successful"
+
+}
+
+install_hetty()
+{
+    echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
+    wget -q -O hetty.tar.gz https://github.com/dstotijn/hetty/releases/download/v0.6.0/hetty_0.6.0_Linux_x86_64.tar.gz
+    tar -xf hetty.tar.gz
+    echo "${GREEN}[Info]${NC}: Installed Successful"
+}
+
+install_gitminer()
+{
+    echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
+    git clone https://github.com/UnkL4b/GitMiner && cd GitMiner && pip3 install -r requirements.txt > /dev/null
+    echo "${GREEN}[Info]${NC}: Installed Successful"
+}
+
+install_xrdp()
+{
+    echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
+    sudo apt install -y xubuntu-desktop xrdp
+}
+
+install_sn1per()
+{
+    echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
+    echo "${RED}PLEASE KEEP WAITING,IT'S WOULD TAKE LONG TIME...${NC}:"
+    git clone https://github.com/1N3/Sn1per && cd Sn1per
+    chmod +x install.sh && bash install.sh
+    echo "${GREEN}[Info]${NC}: Installed Successful"
+
+    # docker pull xer0dayz/sn1per
+    # docker run -it xer0dayz/sn1per /bin/bash
+}
+
+install_osms()
+{
+    echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
+    # docker run -it --rm -v osmws:/root/.osmedeus/workspaces j3ssie/osmedeus:latest scan -f fast -t $DOMAINNAME
+}
+
+if [ ! -z ${1} ]
+then
+    case ${1} in  
+        'allin' )
+
+            for i in $( typeset -f | awk '/ \(\) $/ && !/^main / {print $1}')
+            do
+                    eval $i
+            done
+
+        ;;
+        'dict' )
+            install_dict
+        ;;
+        'hetty' )
+            install_hetty
+        ;;
+        'zap' )
+            install_zap
+        ;;
+        'nuclei' )
+            install_nuclei
+        ;;  
+        'rengine' )
+            install_rengine
+        ;;  
+        'sn1per' )
+            install_sn1per
+        ;;  
+        'gitminer' )
+            install_gitminer
+        ;;  
+    esac
+else 
+    echo "${RED} [$1] ${NC} was not included"
+    echo "Supported:"
+    typeset -f | awk '/ \(\) $/ && !/^main / {print $1}'
+fi
+
+# if [ ! -z ${1} ]
+# then
+
+#     if [ "${1}" = "init" ]; then 
+#         install_dict
+#     fi;
+
+#     if [ "${1}" = "zap" ]; then 
+#         install_zap
+#     fi;
+
+#     if [ "${1}" = "nuclei" ]; then 
+#         install_dict
+#     fi;
+
+#     if [ "${1}" = "rengine" ]; then 
+#         install_rengine
+#     fi;
+    
+# else 
+#     sudo ${*:1}
+# fi

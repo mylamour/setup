@@ -18,7 +18,12 @@ resource "aws_instance" "testecs" {
   // }
 
   // user_data = "${file(".tmp.sync.sh")}"
-  
+  root_block_device {
+    volume_size           = "${var.rootbolcksize}"
+    volume_type           = "gp2"
+    delete_on_termination = true
+  }
+
   connection {
     type     = "ssh"
     user     = "ubuntu"
