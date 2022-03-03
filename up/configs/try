@@ -2,10 +2,15 @@
 
 # Focused on Workflow
 
-scan(){
+scan()
+{
     # find sub domain & path
+    echo "SCAN TASK"
 }
 
-fuzz(){
-
+fuzz()
+{
+    echo "FUZZ TASK"
 }
+
+echo "test"

@@ -19,7 +19,7 @@ install_nuclei()
     echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
     wget -q -O nuclei_2.6.2_linux_amd64.zip https://github.com/projectdiscovery/nuclei/releases/download/v2.6.2/nuclei_2.6.2_linux_amd64.zip
     unzip nuclei_2.6.2_linux_amd64.zip -d nuclei
-    cd nuclei && git clone https://github.com/projectdiscovery/nuclei-templates
+    cd nuclei && git clone https://github.com/projectdiscovery/nuclei-templates &
     echo "${GREEN}[Info]${NC}: Installed Successful"
 }
 
@@ -64,10 +64,13 @@ install_xrdp()
 
 install_sn1per()
 {
+    # include many tools, eg. nuclei
     echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
-    echo "${RED}PLEASE KEEP WAITING,IT'S WOULD TAKE LONG TIME...${NC}:"
-    git clone https://github.com/1N3/Sn1per && cd Sn1per
-    chmod +x install.sh && bash install.sh
+    # echo "${RED}PLEASE KEEP WAITING,IT'S WOULD TAKE LONG TIME...ABOUT 18min ${NC}:"
+    # git clone https://github.com/1N3/Sn1per && cd Sn1per
+    # chmod +x install.sh && bash install.sh
+    docker pull xer0dayz/sn1per
+    alias sniper="docker run -it xer0dayz/sn1per /bin/bash"
     echo "${GREEN}[Info]${NC}: Installed Successful"
 
     # docker pull xer0dayz/sn1per
@@ -111,12 +114,13 @@ then
         ;;  
         'gitminer' )
             install_gitminer
+        ;;
+        *)
+            echo "${RED} [$1] ${NC} was not included"
+            echo "Supported:"
+            typeset -f | awk '/ \(\) $/ && !/^main / {print $1}'
         ;;  
     esac
-else 
-    echo "${RED} [$1] ${NC} was not included"
-    echo "Supported:"
-    typeset -f | awk '/ \(\) $/ && !/^main / {print $1}'
 fi
 
 # if [ ! -z ${1} ]

@@ -3,8 +3,7 @@
 install_proxy()
 {
     echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
-    curl -s -L https://git.io/v2ray.sh > v2ray.sh && chmod +x v2ray.sh 
-    sudo nohup bash printf '1\n2\ny\ny\n' | sudo ./v2ray.sh & >/dev/null 2>&1
+    curl -s -L https://git.io/v2ray.sh > v2ray.sh && chmod +x v2ray.sh && printf '1\n2\ny\ny\n' | sudo ./v2ray.sh > /dev/null
     echo "${GREEN}[Info]${NC}: Installed Successful"
 }
 
@@ -25,7 +24,7 @@ if [ ! -z ${1} ]
 then
 
     if [ "${1}" = "install" ]; then 
-        install_proxy > /dev/null
+        install_proxy
     fi;
 
     if [ "${1}" = "url" ]

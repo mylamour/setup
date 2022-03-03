@@ -14,6 +14,8 @@ install_rust()
 install_java()
 {
     echo "Starting to ${FUNCNAME[0]/_/ }"
+    sudo apt-get install -y openjdk-11-jdk openjdk-11-jre
+    echo "Installed Successful"
 }
 
 install_nodejs()
@@ -56,6 +58,11 @@ then
         install_nodejs > /dev/null
     fi;
 
+    if [ "${1}" = "java" ]; then 
+        install_java > /dev/null
+    fi;
+
+
 else
-    echo "only ruby/rust/docker was supported"
+    echo "only java/ruby/rust/docker was supported"
 fi

@@ -11,14 +11,21 @@ usage()
    echo "Available options:"
    echo "  --help                       prints this"
    echo "  --destroy                    destroy infra"
-   echo "  -r, --run XXX              start to deploy infra"
-   echo "  -s, --shell             run command and enter shell") 1>&2
+   echo "  -s, --shell                  enter shell"
+   echo "  -m, --module XXX             work with module"
+   ) 1>&2
 }
 
 destroyit(){
     echo "${RED}[Warning]${NC}: Start to Detroy the Infra"
     terraform destroy -auto-approve >> .logs
 }
+
+if [ -z ${1} ]
+then
+  usage
+  exit 1
+fi
 
 while [ $# -gt 0 ]
 do
@@ -34,13 +41,13 @@ do
       exit 0
       ;;
       
-    -s|--shell)
+    -s|-shell)
       oldip=$(cat .logs | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | tail -n 1)
       ssh -o StrictHostKeyChecking=no -l ubuntu $oldip
       exit 0
       ;;
 
-    -r|--run)
+    -m|--module)
       if [ $# -lt 2 ]; then
         usage
         exit 1
@@ -93,10 +100,10 @@ then
     
     newip=$(cat .logs | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | tail -n 1)
 
+    rsync $CONFIGDIR/${modfile} ubuntu@${newip}:/tmp/
     # ansible all -i $newip, -m ansible.builtin.script -a "$CONFIGDIR/${modfile} ${otherargs}" --user=ubuntu
    
     command="sudo nohup bash /tmp/${modfile} ${otherargs} &"
-
     ssh -o StrictHostKeyChecking=no -o LogLevel=quiet ubuntu@${newip} ${command}
 
     # ansible all -i $newip, -m shell -a "${command}" --user=ubuntu 
