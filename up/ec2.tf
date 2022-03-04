@@ -8,16 +8,12 @@ resource "aws_key_pair" "local" {
 }
 
 resource "aws_instance" "testecs" {
+  // if you use different ami please changed the user
   ami                = "${data.aws_ami.ubuntu.id}"
   instance_type      = "${var.instancetype}"
   vpc_security_group_ids    = ["${var.securitygroup}"]
   key_name = "${aws_key_pair.local.key_name}"
 
-  // provisioner "local-exec" {
-  //   command = "find ${var.modfile} -type f -exec sed  -i '1i #!bin/bash \n\n${RED}${HIGHLIGHT}Script Running On the Remote Server Now ${NC}\n\n' {} \;"
-  // }
-
-  // user_data = "${file(".tmp.sync.sh")}"
   root_block_device {
     volume_size           = "${var.rootbolcksize}"
     volume_type           = "gp2"

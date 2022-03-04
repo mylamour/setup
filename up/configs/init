@@ -19,6 +19,8 @@ echo "${RED}${HIGHLIGHT}Script Running On the Remote Server Now ${NC}"
 # sudo service sshd restart
 # echo "${GREEN}[Info]${NC}: SSH Services Configured"
 
+# Hide login banner
+touch ~/.hushlogin
 
 echo "[Info]: Starting to modifie profile"
 
@@ -35,7 +37,7 @@ echo "${GREEN}[Info]${NC}: Modified Successful"
 # Install Building Essential and Basic Tools
 echo "[Info]: Starting to install essential"
 sudo apt-get update >/dev/null 2>&1
-sudo apt-get install -y build-essential sshpass curl tmux git unzip lynx pandoc python3 python3-pip python3-tqdm >/dev/null 2>&1
+sudo apt-get install -y build-essential sshpass htop curl tmux git unzip lynx pandoc python3 python3-pip python3-tqdm >/dev/null 2>&1
 curl -s https://rclone.org/install.sh | sudo bash >/dev/null 2>&1
 echo "${GREEN}[Succeed]${NC}: Installed Successful"
 

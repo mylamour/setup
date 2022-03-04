@@ -1,10 +1,11 @@
 #!/bin/bash
 
 # Focused on Workflow
-
 scan() {
     # find sub domain & path
     echo "SCAN TASK"
+# WAF  detection 
+
 }
 
 fuzz() {

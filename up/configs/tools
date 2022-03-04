@@ -57,14 +57,31 @@ install_xrdp() {
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
     printf '2\n' | sudo apt-get install -y ubuntu-desktop xrdp >/dev/null
     sudo adduser xrdp ssl-cert && sudo systemctl restart xrdp
-    sudo ufw allow from 0.0.0.0/0 to any port 3389
-    sudo ufw reload
-    sudo ufw status
+    # sudo ufw allow from 0.0.0.0/0 to any port 3389
+    # sudo ufw reload
+    # sudo ufw status
+    #  do not use it with 1 core 1G memory
     X -configure && X -config /root/xorg.conf.new
 
 
     # sudo mv /root/xorg.conf.new /etc/X11/xorg.conf
     # docker run -p 0.0.0.0:6080:80 -e USER=doro -e PASSWORD=password -v /dev/shm:/dev/shm dorowu/ubuntu-desktop-lxde-vnc:focal
+}
+
+install_kalirdp() {
+    echo "[+] Installing Xfce, this will take a while"
+    sudo apt-get update
+    sudo apt-get dist-upgrade -y
+    sudo apt-get install -y kali-desktop-xfce xrdp
+
+    echo "[+] Configuring XRDP to listen to port 3390 (but not starting the service)..."
+    # sed -i 's/port=3389/port=3390/g' /etc/xrdp/xrdp.ini
+
+    wget -q -O xfce4.sh https://gitlab.com/kalilinux/build-scripts/kali-wsl-chroot/-/raw/master/xfce4.sh
+    chmod +x xfce4.sh && ./xfce4.sh
+
+    sudo systemctl enable xrdp --now
+
 }
 
 install_sn1per() {
