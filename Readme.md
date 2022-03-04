@@ -1,38 +1,38 @@
 # SetUp
 
-## How to
-
-## install
+## Install
 1. terraform
 2. ansible [optional]
 
 ```bash
+cd up && terraform init
+cd ..
 python3 -m venv runenv
 source runenv/bin/activate
 pip3 install ansible awscli
 ```
 
-## configuration
-* AWS AK
+## Configuration
+* Create IAM role and get AK, put it into `~/.aws/credentials`
+* Create security group and get id, put it into `var.tf`
+* Config region into `var.tf` and ``~/.aws/config`
+* (Optional) Change instace type and size
 
-## useage
-1. create instances
-use `terraform apply` or `./start.sh -m init`
 
-2. exec command to remote
-`./start.sh -m shell ls -al`
+## Useage
 
-3. exec tgbot
+1. show help
+`./start.sh -h`
+
+2. create instances
+ you can use `terraform apply` or `./start.sh -m init`
+
+3. exec command to remote
+`./start.sh -m shell 'ls -al'`
+
+4. exec tgbot
 `./start.sh -m tgbot`
 
-4. install tools
+5. install tools
 `./start.sh -m tools `
 
-```bash
-cd up
-./start.sh
-./start.sh -m init
-./start.sh -m runtime docker
-./start.sh -m shell ls -al
-./start.sh -s
-```

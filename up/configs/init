@@ -1,48 +1,53 @@
 #!/bin/bash
 
-# RED='\e[91m'
-# GREEN='\e[92m'
-# YELLOW='\e[93m'
-# NC='\e[0m'
-# _red() { echo -e ${RED}$*${NC}; }
-# _green() { echo -e ${GREEN}$*${NC}; }
-# _yellow() { echo -e ${YELLOW}$*${NC}; }
+#TODO: Check if it was exists env
 
-# cat <<EOF > ~/.bashrc
-setenv TERM vt100 
-RED=$(tput setaf 1)
-GREEN=$(tput setaf 2)
-YELLOW=$(tput setaf 3)
-NC=$(tput sgr0)
-# EOF
+export RED=$(tput setaf 1 -T linux)
+export GREEN=$(tput setaf 2 -T linux)
+export YELLOW=$(tput setaf 3 -T linux)
+export NC=$(tput sgr0 -T linux)
+export HIGHLIGHT=$(tput setab 7 -T linux)
 
-echo "[Info]: Starting to modifie .bashrc"
+echo "${RED}${HIGHLIGHT}Script Running On the Remote Server Now ${NC}"
 
-sed -i '$ a export RED="tput setaf 1"' ~/.bashrc
-sed -i '$ a export GREEN="tput setaf 2"' ~/.bashrc
-sed -i '$ a export YELLOW="tput setaf 2"' ~/.bashrc
-sed -i '$ a export NC="tput sgr0"' ~/.bashrc
+# note: also can get by remote services. just add way
+# echo "[Info]: Starting to Config SSH"
+# sudo sed -i '$ a AcceptEnv TGBOTOKEN' /etc/ssh/sshd_config
+# sudo sed -i '$ a AcceptEnv ASKUSER' /etc/ssh/sshd_config
+# sudo sed -i '$ a AcceptEnv ASKPASS' /etc/ssh/sshd_config
+# sudo sed -i '$ a AcceptEnv ROOTPASS' /etc/ssh/sshd_config
+# sudo service sshd restart
+# echo "${GREEN}[Info]${NC}: SSH Services Configured"
 
-source ~/.bashrc
+
+echo "[Info]: Starting to modifie profile"
+
+# note: if run with sudo. ~ was eq /root/ folder
+sed -i '$ a export RED=$(tput setaf 1 -T linux)' /etc/profile
+sed -i '$ a export GREEN=$(tput setaf 2 -T linux)' /etc/profile
+sed -i '$ a export YELLOW=$(tput setaf 3 -T linux)' /etc/profile
+sed -i '$ a export NC=$(tput sgr0 -T linux)' /etc/profile
+sed -i '$ a export HIGHLIGHT=$(tput setab 7 -T linux)' /etc/profile
+
+source /etc/profile
 
 echo "${GREEN}[Info]${NC}: Modified Successful"
-
 # Install Building Essential and Basic Tools
-echo "${YELLOW}[Info]${NC}: Starting to install essential"
+echo "[Info]: Starting to install essential"
 sudo apt-get update >/dev/null 2>&1
 sudo apt-get install -y build-essential sshpass curl tmux git unzip lynx pandoc python3 python3-pip python3-tqdm >/dev/null 2>&1
 curl -s https://rclone.org/install.sh | sudo bash >/dev/null 2>&1
-echo "${GREEN}[Info]${NC}: Installed Successful"
+echo "${GREEN}[Succeed]${NC}: Installed Successful"
 
-echo "${YELLOW}[Info]${NC}: Starting to config tmux"
+echo "[Info]: Starting to config tmux"
 git clone https://github.com/gpakosz/.tmux.git >/dev/null 2>&1
 ln -s -f .tmux/.tmux.conf
 cp .tmux/.tmux.conf.local .
-echo "${GREEN}[Info]${NC}: Configured Successful"
+echo "${GREEN}[Succeed]${NC}: Configured Successful"
 
-echo "${YELLOW}[Info]${NC}: Starting to config sftp"
+echo "[Info]: Starting to config sftp"
 
-echo "${GREEN}[Info]${NC}: Configured Successful"
+echo "${GREEN}[Succeed]${NC}: Configured Successful"
 
 # echo "Starting to kernel tunning"
 # wget -O kernetunning.sh https://gist.githubusercontent.com/soediro/192684163c29b2bf42ea4ce99bcd1793/raw/e5fc9c40f5979d6eeab790361ddbe749c761f158/ubuntu-kernel-tuning.sh

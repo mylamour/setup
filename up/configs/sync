@@ -1,4 +1,6 @@
-#!bin/bash
+#!/bin/bash
+
+echo "${RED}${HIGHLIGHT}Script Running On the Remote Server Now ${NC}"
 
 # download and upload to remote automaticlly
 

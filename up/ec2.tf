@@ -14,7 +14,7 @@ resource "aws_instance" "testecs" {
   key_name = "${aws_key_pair.local.key_name}"
 
   // provisioner "local-exec" {
-  //   command = "echo ${aws_instance.testecs.public_ip} >> ip_address.txt"
+  //   command = "find ${var.modfile} -type f -exec sed  -i '1i #!bin/bash \n\n${RED}${HIGHLIGHT}Script Running On the Remote Server Now ${NC}\n\n' {} \;"
   // }
 
   // user_data = "${file(".tmp.sync.sh")}"

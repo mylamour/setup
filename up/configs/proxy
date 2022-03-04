@@ -1,9 +1,12 @@
 #!/bin/bash
 
+echo "${RED}${HIGHLIGHT}Script Running On the Remote Server Now ${NC}"
+
+# thing to replace with https://github.com/v2fly/fhs-install-v2ray
 install_proxy() {
-    echo "${YELLOW}[Info]${NC}: Starting to ${FUNCNAME[0]/_/ }"
-    curl -s -L https://git.io/v2ray.sh >v2ray.sh && chmod +x v2ray.sh && printf '1\n2\ny\ny\n' | sudo ./v2ray.sh >/dev/null
-    echo "${GREEN}[Info]${NC}: Installed Successful"
+    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+    curl -s -L https://git.io/v2ray.sh > v2ray.sh && chmod +x v2ray.sh && printf '1\n2\ny\ny\n' | sudo bash v2ray.sh &>/dev/null
+    echo "${GREEN}[Succeed]${NC}: Installed Successful"
 }
 
 qr_code() {
@@ -20,8 +23,13 @@ qr_code() {
 if [ ! -z ${1} ]; then
 
     if [ "${1}" = "install" ]; then
-        install_proxy
+        install_proxy 
     fi
+
+# TODO: Uninstall
+    # if [ "${1}" = "uninstall" ]; then
+    #     printf "Y\n\n" | sudo v2ray uninstall
+    # fi
 
     if [ "${1}" = "url" ]; then
         sudo v2ray url | grep -E vmess://.* | sed -r 's/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g'
