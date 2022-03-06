@@ -11,7 +11,7 @@ ANSIBLE_CONFIG="./ansible.cfg"
 HOSTS="./inventory/hosts"
 
 # let's ansible.cfg use $HOSTS as the inventory path.
-sed -i '' -e 's/inventory.*/inventory = \.\/inventory\/hosts/' ansible.cfg 
+sed -i '' -e 's/inventory.*/inventory = \.\/inventory\/hosts/' ansible.cfg
 
 usage() {
   (
@@ -26,9 +26,9 @@ usage() {
 
 destroyit() {
   echo "${RED}${HIGHLIGHT}[Warning]${NC}: Start to Detroy the Infra"
-  terraform destroy -auto-approve >>.logs
-  echo > inventory/hosts 
-  echo "${GREEN}${HIGHLIGHT}[Succeed]${NC}: Destroyed"
+  terraform destroy -auto-approve >>.logs/.terraform.log
+  echo >inventory/hosts
+  echo "${GREEN}[Succeed]${NC}: Destroyed"
 }
 
 sshtoremote() {
@@ -37,8 +37,6 @@ sshtoremote() {
   if [ -z $oldip ]; then
     echo "${RED}${HIGHLIGHT}[Error]${NC}: Your Instances was not exists, Please use './start.sh -m init' to create instance"
     exit 1
-  else
-    ssh -o StrictHostKeyChecking=no -l ubuntu $oldip
   fi
 }
 
@@ -95,12 +93,12 @@ else
     exit 0
   else
     echo "${YELLOW}[Info]${NC}: Start to Create Instances with OS: ubuntu"
-    terraform apply -auto-approve >>.logs
+    terraform apply -auto-approve >>.logs/.terraform.log
     # server_ip was defined at output.tf
-    echo '[cloud]' > ${HOSTS} && cat terraform.tfstate | jq -r '.outputs.server_ip.value[]' >> ${HOSTS}
+    echo '[cloud]' >${HOSTS} && cat terraform.tfstate | jq -r '.outputs.server_ip.value[]' >>${HOSTS}
 
     if [ $? -eq 0 ]; then
-      echo "${GREEN}[Info]${NC}: Instances Created"
+      echo "${GREEN}[Succeed]${NC}: Instances Created"
       exit 0
     else
       echo "${RED}${HIGHLIGHT}[ERROR]${NC}: Instances Created FAILED, Please check it now"
@@ -110,21 +108,14 @@ else
 fi
 
 # if instances was exists then was able to load modules
+# TODO: use Playbook to support complex task and process logical locally
 if [ -f $CONFIG_DIR/${modfile} ]; then
-
-  newip=$(cat .logs | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | tail -n 1)
-
-  rsync -c -e "ssh -o StrictHostKeyChecking=no" $CONFIG_DIR/${modfile} ubuntu@${newip}:/tmp/
 
   echo "${GREEN}[Succeed]${NC}: Loading module: ${modfile}"
 
   # ansible all -i $newip, -m ansible.builtin.script -a "$CONFIG_DIR/${modfile} ${otherargs}" --user=ubuntu
-  command=" source /etc/profile && sudo nohup bash /tmp/${modfile} ${otherargs} &"
-  ssh -o StrictHostKeyChecking=no -o LogLevel=quiet ubuntu@${newip} ${command}
-
-  # ansible all -i $newip, -m shell -a "${command}" --user=ubuntu
-  # ssh -o StrictHostKeyChecking=no -l ubuntu $newip
-  ansible all -m shell -a "ls -al" --user=ubuntu
+  command="sudo nohup bash /tmp/${modfile} ${otherargs} &"
+  ansible all -m shell -a "${command}" --user=ubuntu
 
 else
   echo "${RED}${HIGHLIGHT}[Error]${NC}: Your Module was Not Exists, Please make sure it was exist in configs folder"
