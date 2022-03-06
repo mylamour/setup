@@ -9,6 +9,8 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 CONFIGDIR="$DIR/configs"
 AMIUSED="ubuntu"
 
+mkdir -p .logs
+
 if [ $AMIUSED = "ubuntu" ]; then
   sed -i '' -e 's/kali/ubuntu/g' ec2.tf
 else
@@ -33,7 +35,7 @@ usage() {
 
 destroyit() {
   echo "${RED}${HIGHLIGHT}[Warning]${NC}: Start to Detroy the Infra"
-  terraform destroy -auto-approve >>.logs
+  terraform destroy -auto-approve >>.logs/.terraform.log
 }
 
 sshtoremote() {
@@ -99,7 +101,7 @@ else
     exit 0
   else
     echo "${YELLOW}[Info]${NC}: Start to Create Instances with OS: ${AMIUSED}"
-    terraform apply -auto-approve >>.logs
+    terraform apply -auto-approve >>.logs/.terraform.log
 
     if [ $? -eq 0 ]; then
       echo "${GREEN}[Info]${NC}: Instances Created"
@@ -114,18 +116,15 @@ fi
 # if instances was exists then was able to load modules
 if [ -f $CONFIGDIR/${modfile} ]; then
 
-  newip=$(cat .logs | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | tail -n 1)
+  newip=$(cat .logs/.terraform.log | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | tail -n 1)
 
   rsync -c -e "ssh -o StrictHostKeyChecking=no" $CONFIGDIR/${modfile} ${AMIUSED}@${newip}:/tmp/
 
   echo "${GREEN}[Succeed]${NC}: Loading module: ${modfile}"
 
-  # ansible all -i $newip, -m ansible.builtin.script -a "$CONFIGDIR/${modfile} ${otherargs}" --user=ubuntu
-  command=" source /etc/profile && sudo nohup bash /tmp/${modfile} ${otherargs} &"
+  # command="source /etc/profile; sudo nohup bash /tmp/${modfile} ${otherargs} &"
+  command="source /etc/profile; bash /tmp/${modfile} ${otherargs} &" # colored, i got it
   ssh -o StrictHostKeyChecking=no -o LogLevel=quiet ${AMIUSED}@${newip} ${command}
-
-  # ansible all -i $newip, -m shell -a "${command}" --user=ubuntu
-  # ssh -o StrictHostKeyChecking=no -l ubuntu $newip
 
 else
   echo "${RED}${HIGHLIGHT}[Error]${NC}: Your Module was Not Exists, Please make sure it was exist in configs folder"

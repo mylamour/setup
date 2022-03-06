@@ -12,3 +12,5 @@ try/
 *.py
 ansible.cfg
 tgbot/
+inventory
+.gitignore
