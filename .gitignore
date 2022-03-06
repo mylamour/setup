@@ -6,9 +6,9 @@
 *.tfstate
 *.tfstate.backup
 *.tfstate.lock.info
-playbooks
 runenv
 try/
 *.py
-ansible.cfg
 tgbot/
+hosts
+.gitignore

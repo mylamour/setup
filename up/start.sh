@@ -6,19 +6,12 @@ YELLOW=$(tput setaf 3)
 HIGHLIGHT=$(tput setab 7 -T linux)
 NC=$(tput sgr0)
 DIR="$(cd "$(dirname "$0")" && pwd)"
-CONFIGDIR="$DIR/configs"
-AMIUSED="ubuntu"
+CONFIG_DIR="$DIR/configs"
+ANSIBLE_CONFIG="./ansible.cfg"
+HOSTS="./inventory/hosts"
 
-if [ $AMIUSED = "ubuntu" ]; then
-  sed -i '' -e 's/kali/ubuntu/g' ec2.tf
-else
-  if [ $AMIUSED = "kali" ]; then
-    sed -i '' -e 's/ubuntu/kali/g' ec2.tf
-  else
-    echo "Please Select ${RED}${HIGHLIGHT}Ubuntu or Kali${NC}, Default was Ubuntu"
-    exit 1
-  fi
-fi
+# let's ansible.cfg use $HOSTS as the inventory path.
+sed -i '' -e 's/inventory.*/inventory = \.\/inventory\/hosts/' ansible.cfg 
 
 usage() {
   (
@@ -34,15 +27,18 @@ usage() {
 destroyit() {
   echo "${RED}${HIGHLIGHT}[Warning]${NC}: Start to Detroy the Infra"
   terraform destroy -auto-approve >>.logs
+  echo > inventory/hosts 
+  echo "${GREEN}${HIGHLIGHT}[Succeed]${NC}: Destroyed"
 }
 
 sshtoremote() {
+  # TODO: need pass server ip to function
   oldip=$(cat terraform.tfstate | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -n 1)
   if [ -z $oldip ]; then
     echo "${RED}${HIGHLIGHT}[Error]${NC}: Your Instances was not exists, Please use './start.sh -m init' to create instance"
     exit 1
   else
-    ssh -o StrictHostKeyChecking=no -l ${AMIUSED} $oldip
+    ssh -o StrictHostKeyChecking=no -l ubuntu $oldip
   fi
 }
 
@@ -98,8 +94,10 @@ else
     echo "${RED}${HIGHLIGHT}[Error]${NC}: Your Instances was not exists, Please use './start.sh -m init' to create instance"
     exit 0
   else
-    echo "${YELLOW}[Info]${NC}: Start to Create Instances with OS: ${AMIUSED}"
+    echo "${YELLOW}[Info]${NC}: Start to Create Instances with OS: ubuntu"
     terraform apply -auto-approve >>.logs
+    # server_ip was defined at output.tf
+    echo '[cloud]' > ${HOSTS} && cat terraform.tfstate | jq -r '.outputs.server_ip.value[]' >> ${HOSTS}
 
     if [ $? -eq 0 ]; then
       echo "${GREEN}[Info]${NC}: Instances Created"
@@ -112,20 +110,21 @@ else
 fi
 
 # if instances was exists then was able to load modules
-if [ -f $CONFIGDIR/${modfile} ]; then
+if [ -f $CONFIG_DIR/${modfile} ]; then
 
   newip=$(cat .logs | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | tail -n 1)
 
-  rsync -c -e "ssh -o StrictHostKeyChecking=no" $CONFIGDIR/${modfile} ${AMIUSED}@${newip}:/tmp/
+  rsync -c -e "ssh -o StrictHostKeyChecking=no" $CONFIG_DIR/${modfile} ubuntu@${newip}:/tmp/
 
   echo "${GREEN}[Succeed]${NC}: Loading module: ${modfile}"
 
-  # ansible all -i $newip, -m ansible.builtin.script -a "$CONFIGDIR/${modfile} ${otherargs}" --user=ubuntu
+  # ansible all -i $newip, -m ansible.builtin.script -a "$CONFIG_DIR/${modfile} ${otherargs}" --user=ubuntu
   command=" source /etc/profile && sudo nohup bash /tmp/${modfile} ${otherargs} &"
-  ssh -o StrictHostKeyChecking=no -o LogLevel=quiet ${AMIUSED}@${newip} ${command}
+  ssh -o StrictHostKeyChecking=no -o LogLevel=quiet ubuntu@${newip} ${command}
 
   # ansible all -i $newip, -m shell -a "${command}" --user=ubuntu
   # ssh -o StrictHostKeyChecking=no -l ubuntu $newip
+  ansible all -m shell -a "ls -al" --user=ubuntu
 
 else
   echo "${RED}${HIGHLIGHT}[Error]${NC}: Your Module was Not Exists, Please make sure it was exist in configs folder"

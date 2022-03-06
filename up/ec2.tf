@@ -14,6 +14,8 @@ resource "aws_instance" "testecs" {
   vpc_security_group_ids    = ["${var.securitygroup}"]
   key_name = "${aws_key_pair.local.key_name}"
 
+  count=5
+
   root_block_device {
     volume_size           = "${var.rootbolcksize}"
     volume_type           = "gp2"
@@ -37,9 +39,9 @@ resource "aws_instance" "testecs" {
   //   destination = "${var.configdir['remote}"
   // }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo bash /tmp/init" ,
-    ]
-  }
+  // provisioner "remote-exec" {
+  //   inline = [
+  //     "sudo bash /tmp/init" ,
+  //   ]
+  // }
 }
