@@ -72,22 +72,6 @@ install_xrdp() {
     # docker run -p 0.0.0.0:6080:80 -e USER=doro -e PASSWORD=password -v /dev/shm:/dev/shm dorowu/ubuntu-desktop-lxde-vnc:focal
 }
 
-install_kalirdp() {
-    echo "[+] Installing Xfce, this will take a while"
-    sudo apt-get update
-    sudo apt-get dist-upgrade -y
-    sudo apt-get install -y kali-desktop-xfce xrdp
-
-    echo "[+] Configuring XRDP to listen to port 3390 (but not starting the service)..."
-    # sed -i 's/port=3389/port=3390/g' /etc/xrdp/xrdp.ini
-
-    wget -q -O xfce4.sh https://gitlab.com/kalilinux/build-scripts/kali-wsl-chroot/-/raw/master/xfce4.sh
-    chmod +x xfce4.sh && ./xfce4.sh
-
-    sudo systemctl enable xrdp --now
-
-}
-
 install_sn1per() {
     # include many tools, eg. nuclei
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
@@ -112,6 +96,7 @@ install_emagent() {
 
 install_osms() {
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+    docker pull
     # docker run -it --rm -v osmws:/root/.osmedeus/workspaces j3ssie/osmedeus:latest scan -f fast -t $DOMAINNAME
 }
 

@@ -127,5 +127,5 @@ if [ -f $CONFIGDIR/${modfile} ]; then
   ssh -o StrictHostKeyChecking=no -o LogLevel=quiet ${AMIUSED}@${newip} ${command}
 
 else
-  echo "${RED}${HIGHLIGHT}[Error]${NC}: Your Module was Not Exists, Please make sure it was exist in configs folder"
+  echo "${RED}${HIGHLIGHT}[Error]${NC}: Your Module was Not Exists, Please put it into configs folder"
 fi
