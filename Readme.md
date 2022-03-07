@@ -6,7 +6,7 @@ A project was aim to set up testing env quickly in cloud.
 2. Install `terraform` depends on [Terraform install](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 3. Create IAM role and get AK, put it into `~/.aws/credentials`
 4. Create security group and get id, put it into `var.tf`
-5. Config region into `var.tf` and ``~/.aws/config`
+5. Config region into `var.tf` and `~/.aws/config`
 6. (Optional) Change instace type and size
 
 ## setup
@@ -17,6 +17,8 @@ cd setup/up && terraform init
 ```
 
 ## Useage
+
+[![asciicast](https://asciinema.org/a/Q2Ao0WRRZRDQuZ6YXVzggud4V.svg)](https://asciinema.org/a/Q2Ao0WRRZRDQuZ6YXVzggud4V)
 
 1. show help
 `./start.sh -h`
