@@ -1,3 +1,4 @@
+.gitignore
 *.pem
 .idea
 .logs
@@ -11,4 +12,5 @@ try/
 *.py
 tgbot/
 hosts
-.gitignore
+note.md
+TODO
