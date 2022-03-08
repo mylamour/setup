@@ -10,6 +10,7 @@ SCRIPT_DIR="$DIR/scripts"
 ANSIBLE_CONFIG="./ansible.cfg"
 HOSTS="./inventory/hosts"
 
+mkdir -p .logs outputs
 # let's ansible.cfg use $HOSTS as the inventory path.
 sed -i '' -e 's/inventory.*/inventory = \.\/inventory\/hosts/' ansible.cfg
 
