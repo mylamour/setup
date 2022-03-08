@@ -1,0 +1,27 @@
+---
+
+- name: x.up
+  hosts: cloud
+  remote_user: ubuntu
+  # become: yes
+
+  tasks:
+    - name: Upload script from local to remote
+      ignore_errors: True
+      register: upload_files
+      tags:
+         - 'upload'
+      copy:
+        src: '{{ inventory_dir | dirname}}/configs/{{scripts}}'
+        dest: /tmp/
+    # - local_action: copy content={{ upload_files }} dest=ansiblelogs
+
+    # - name: Download output from remote to local 
+    #   ignore_errors: True
+    #   register: download_files
+    #   tags:
+    #      - 'download'
+    #   synchronize:   # fuck! it was pushed to remote, mlgb
+    #     src: '~/dict/fuzz'
+    #     dest: '{{ inventory_dir | dirname}}/outputs'
+    # # - local_action: copy content={{ download_files }} dest=ansiblelogs

@@ -14,7 +14,7 @@ resource "aws_instance" "testecs" {
   vpc_security_group_ids    = ["${var.securitygroup}"]
   key_name = "${aws_key_pair.local.key_name}"
 
-  count=5
+  count = "${var.instacescount}"
 
   root_block_device {
     volume_size           = "${var.rootbolcksize}"

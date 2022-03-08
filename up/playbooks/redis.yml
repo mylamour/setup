@@ -1,0 +1,13 @@
+---
+
+- name: x.up
+  hosts: cloud
+  remote_user: ubuntu
+  # become: yes
+
+  tasks:
+    - name: Config Redis Cluster
+      ignore_errors: True
+      register: redis_config
+      tags:
+         - 'upload'

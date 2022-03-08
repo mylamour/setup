@@ -9,6 +9,10 @@ variable "instancetype" {
     // t2.xlarge 4c16g 0.186$/hr
 }
 
+variable "instacescount" {
+    default = "2"
+}
+
 variable "securitygroup" {
     default = "sg-9161f3f7"
 }
@@ -18,7 +22,7 @@ variable "rootbolcksize" {
 }
 
 variable "modfile" { 
-    default = "./configs/"
+    default = "./scripts/"
 }
 
 data "aws_ami" "ubuntu" {

@@ -7,11 +7,26 @@ echo "${RED}${HIGHLIGHT}Script Running On the Remote Server Now ${NC}"
 BASEDIR="/home/ubuntu/"
 
 install_dict() {
+    if [[ -d "dict" ]]; then
+        echo "[Info]: Dict exists."
+        exit 0
+    fi
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
-    mkdir -p dict && cd dict
-    git clone https://github.com/1N3/IntruderPayloads &
-    git clone https://github.com/Bo0oM/fuzz.txt &
-    git clone https://github.com/gh0stkey/Web-Fuzzing-Box &
+    mkdir -p dict/brute dict/dir dict/fuzz dict/.hidden && cd dict
+    git clone https://github.com/1N3/IntruderPayloads && git clone https://github.com/Bo0oM/fuzz.txt && git clone https://github.com/gh0stkey/Web-Fuzzing-Box
+    
+    # mv fuzz.txt/*.txt ./dict/fuzz
+    # mv IntruderPayloads/FuzzLists/*.txt fuzz
+    # find Web-Fuzzing-Box/Dir -type f -exec mv {} dir \;
+    # find Web-Fuzzing-Box/Brute -type f -exec mv {} brute \;
+    # mv IntruderPayloads fuzz.txt Web-Fuzzing-Box .hidden
+    
+    echo "${GREEN}[Succeed]${NC}: Installed Successful"
+}
+
+install_mq(){
+    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+    sudo apt-get install -y tcl redis-server
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
 }
 
@@ -59,14 +74,13 @@ install_xrdp() {
     sudo apt-get update
     sudo apt-get install xubuntu-desktop xfce4 xfce4-goodies xrdp xfconf tasksel
     sudo adduser xrdp ssl-cert && sudo systemctl restart xrdp
-    echo "startxfce4" > ~/.Xsession
+    echo "startxfce4" >~/.Xsession
     chmod +x ~/.Xsession
     sudo systemctl restart xrdp.service
     # there was a script wget https://www.c-nergy.be/downloads/xrdp-installer-1.2.2.zip
-    # printf '2\n' | sudo apt-get install -y ubuntu-desktop 
+    # printf '2\n' | sudo apt-get install -y ubuntu-desktop
     #  use lightdm
     # X -configure && X -config /root/xorg.conf.new &
-
 
     # sudo mv /root/xorg.conf.new /etc/X11/xorg.conf
     # docker run -p 0.0.0.0:6080:80 -e USER=doro -e PASSWORD=password -v /dev/shm:/dev/shm dorowu/ubuntu-desktop-lxde-vnc:focal
