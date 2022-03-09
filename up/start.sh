@@ -6,7 +6,7 @@ YELLOW=$(tput setaf 3)
 HIGHLIGHT=$(tput setab 7 -T linux)
 NC=$(tput sgr0)
 DIR="$(cd "$(dirname "$0")" && pwd)"
-CONFIGDIR="$DIR/configs"
+CONFIGDIR="$DIR/scripts"
 AMIUSED="ubuntu"
 
 mkdir -p .logs
@@ -125,7 +125,6 @@ if [ -f $CONFIGDIR/${modfile} ]; then
   # command="source /etc/profile; sudo nohup bash /tmp/${modfile} ${otherargs} &"
   command="source /etc/profile; bash /tmp/${modfile} ${otherargs} &" # colored, i got it
   ssh -o StrictHostKeyChecking=no -o LogLevel=quiet ${AMIUSED}@${newip} ${command}
-
 else
   echo "${RED}${HIGHLIGHT}[Error]${NC}: Your Module was Not Exists, Please put it into configs folder"
 fi

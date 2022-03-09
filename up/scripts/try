@@ -1,0 +1,63 @@
+#!/bin/bash
+
+echo "${RED}${HIGHLIGHT}Script Running On the Remote Server Now ${NC}"
+
+# Focused on Workflow
+scan_pipeline() {
+    mkdir -p ~/mdata/$domainname
+    # find sub domain & path
+    if [ ! -d "scantools" ]; then
+        echo "${RED}${HIGHLIGHT}[Warning]${NC}: your tools folder was not exists, please use $(./start.sh -m tools scan) to initialize it"
+        exit 1
+    else
+        source ~/scantools/scanenv/bin/activate
+        echo "${GREEN}[Info]${NC}: Scan Environment Activated"
+        echo "Domain: $domainname"
+        if [ ! -f ~/mdata/$domainname/$domainname.lists.ips ]; then
+            echo "1. get sub domain"
+            cd ~/scantools/subDomainsBrute && python3 subDomainsBrute.py --w --full $domainname --output ~/mdata/$domainname/$domainname.lists.domainswithip
+            cat ~/mdata/$domainname/$domainname.lists.domainswithip | awk '{print $1}' >~/mdata/$domainname/$domainname.lists.domain
+            cat ~/mdata/$domainname/$domainname.lists.domainswithip | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | uniq >~/mdata/$domainname/$domainname.lists.ips
+        fi
+
+        if [ ! -f ~/mdata/$domainname/$domainname.lists.ports ]; then
+            echo "2. port scan"
+            cat ~/mdata/$domainname/$domainname.lists.ips | sudo naabu >~/mdata/$domainname/$domainname.lists.ports
+        fi
+
+        if [ ! -f ~/mdata/$domainname/$domainname.lists.urlswithstatus ]; then
+            echo "3. url path check"
+            cd ~/scantools/dirsearch/ && python3 dirsearch.py --url-list ~/mdata/$domainname/$domainname.lists.domain --output ~/mdata/$domainname/$domainname.lists.urlswithstatus >/dev/null
+
+        fi
+        if [ ! -f ~/mdata/$domainname/$domainname.lists.wafcheck ]; then
+
+            echo "4. waf detection"
+            cat ~/mdata/$domainname/$domainname.lists.urlswithstatus | awk '{print $3}' >~/mdata/$domainname/$domainname.lists.urls
+            cd ~/scantools/WhatWaf/ && python3 whatwaf --list ~/mdata/$domainname/$domainname.lists.urls --output ~/mdata/$domainname/$domainname.lists.wafcheck
+        fi
+
+        # echo "5. cms detection"
+        # cd ~/scantools/CMSeeK/ && python3 cmseek.py --list ~/mdata/$domainname/$domainname.lists.urls
+
+    fi
+    # WAF  detection
+}
+
+fuzz_pipeline() {
+    echo "FUZZ TASK"
+}
+
+if [ ! -z ${1} ]; then
+    case ${1} in
+    'scan')
+        domainname=${2}
+        scan_pipeline
+        ;;
+    *)
+        echo "${RED}${HIGHLIGHT}[Error]${NC}: $1 was not included"
+        echo "Supported:"
+        typeset -f | awk '/ \(\) $/ && !/^main / {print $1}'
+        ;;
+    esac
+fi

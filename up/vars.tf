@@ -18,7 +18,7 @@ variable "rootbolcksize" {
 }
 
 variable "modfile" { 
-    default = "./configs/"
+    default = "./scripts/"
 }
 
 data "aws_ami" "ubuntu" {

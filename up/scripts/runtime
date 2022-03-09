@@ -37,6 +37,14 @@ install_docker() {
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
 }
 
+install_golang(){
+    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+    wget -q -O go1.17.8.linux-amd64.tar.gz https://go.dev/dl/go1.17.8.linux-amd64.tar.gz
+    tar -C /usr/local -xzf go1.17.8.linux-amd64.tar.gz
+    sed -i '$ a export PATH=$PATH:/usr/local/go/bin' ~/.bashrc
+    echo "${GREEN}[Succeed]${NC}: Installed Successful"
+}
+
 if [ ! -z ${1} ]; then
 
     case ${1} in
@@ -55,6 +63,9 @@ if [ ! -z ${1} ]; then
         ;;
     'nodejs')
         install_nodejs
+        ;;
+    'go')
+        install_golang
         ;;
     *)
         echo "${RED}${HIGHLIGHT}[Error]${NC}: $1 was not included"
