@@ -104,8 +104,7 @@ else
     terraform apply -auto-approve >>.logs/.terraform.log
 
     if [ $? -eq 0 ]; then
-      echo "${GREEN}[Info]${NC}: Instances Created"
-      exit 0
+      echo "${GREEN}[Succeed]${NC}: Instances Created"
     else
       echo "${RED}${HIGHLIGHT}[ERROR]${NC}: Instances Created FAILED, Please check it now"
       exit 1
@@ -113,18 +112,24 @@ else
   fi
 fi
 
-# if instances was exists then was able to load modules
-if [ -f $CONFIGDIR/${modfile} ]; then
+newip=$(cat .logs/.terraform.log | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | tail -n 1)
 
-  newip=$(cat .logs/.terraform.log | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | tail -n 1)
-
-  rsync -c -e "ssh -o StrictHostKeyChecking=no" $CONFIGDIR/${modfile} ${AMIUSED}@${newip}:/tmp/
-
-  echo "${GREEN}[Succeed]${NC}: Loading module: ${modfile}"
-
-  # command="source /etc/profile; sudo nohup bash /tmp/${modfile} ${otherargs} &"
-  command="source /etc/profile; bash /tmp/${modfile} ${otherargs} &" # colored, i got it
-  ssh -o StrictHostKeyChecking=no -o LogLevel=quiet ${AMIUSED}@${newip} ${command}
+if [ ${modfile} == "download" ]; then
+  echo "${YELLOW}[Info]${NC}: Start Syncing"
+  rsync -qchavzP -e 'ssh -o StrictHostKeyChecking=no' ${AMIUSED}@${newip}:${otherargs}
+  echo "${GREEN}[Succeed]${NC}: Data Synced"
+  exit 0
 else
-  echo "${RED}${HIGHLIGHT}[Error]${NC}: Your Module was Not Exists, Please put it into configs folder"
+  # if instances was exists then was able to load modules
+  if [ -f $CONFIGDIR/${modfile} ]; then
+
+    rsync -c -e "ssh -o StrictHostKeyChecking=no" $CONFIGDIR/${modfile} ${AMIUSED}@${newip}:/tmp/
+
+    echo "${GREEN}[Succeed]${NC}: Loading module: ${modfile}"
+    # command="source /etc/profile; sudo nohup bash /tmp/${modfile} ${otherargs} &"
+    command="source /etc/profile; bash /tmp/${modfile} ${otherargs} &" # colored, i got it
+    ssh -o StrictHostKeyChecking=no -o LogLevel=quiet ${AMIUSED}@${newip} ${command}
+  else
+    echo "${RED}${HIGHLIGHT}[Error]${NC}: Your Module was Not Exists, Please put it into configs folder"
+  fi
 fi

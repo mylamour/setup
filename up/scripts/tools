@@ -109,17 +109,36 @@ install_allinoneplatform() {
     echo "[Info]: Starting to install rengine"
     # will install docker automatically
     git clone https://github.com/yogeshojha/rengine && cd rengine
+
+    authpass=$(pwgen -s -1 18)
+    pgpass=$(pwgen -s -1 18)
+
+    sed -i "s/AUTHORITY_PASSWORD=.*/AUTHORITY_PASSWORD=$authpass/g" .env
+    sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$pgpass/g" .env
+
     chmod +x ./install.sh && sudo ./install.sh
+
+    # sudo docker stop rengine_web_1
+    # sudo docker exec -i rengine_db_1 psql -U rengine postgres -c "DROP DATABASE rengine;"
+    # sudo docker exec -i rengine_db_1 psql -U rengine postgres -c "CREATE DATABASE rengine;"
+    # cat /tmp/rengine_dump_.sql | sudo docker exec -i rengine_db_1 psql -U rengine -d rengine
+    # rm /tmp/rengine_dump_.sql
+
+
     # use  ·make username· to create user
     echo "[Info]: Starting to install sn1per"
-    docker pull xer0dayz/sn1per
+    sudo docker pull xer0dayz/sn1per
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
 }
 
 install_proxy() {
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
-    echo "[Info]: Starting to install zap }"
 
+    echo "[Info]: Get Proxy List" 
+    # Download and save to local file `proxt-list.txt` with format `IP:PORT`
+    curl -sSf "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt" > proxy-list.txt
+
+    echo "[Info]: Starting to install zap"
     # need java runtime
     wget -q -O zap.tar.gz https://github.com/zaproxy/zaproxy/releases/download/v2.11.1/ZAP_2.11.1_Linux.tar.gz
     tar -xf zap.tar.gz
@@ -128,7 +147,7 @@ install_proxy() {
         sudo bash /tmp/runtime java
     fi
 
-    echo "[Info]: Starting to install hetty }"
+    echo "[Info]: Starting to install hetty"
     wget -q -O hetty.tar.gz https://github.com/dstotijn/hetty/releases/download/v0.6.0/hetty_0.6.0_Linux_x86_64.tar.gz
     tar -xf hetty.tar.gz
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
@@ -168,29 +187,17 @@ if [ ! -z ${1} ]; then
     'dict')
         install_dict
         ;;
-    'hetty')
-        install_hetty
+    'proxy')
+        install_proxy
         ;;
-    'zap')
-        install_zap
-        ;;
-    'nuclei')
-        install_nuclei
+    'leak')
+        install_dataleak
         ;;
     'rengine')
-        install_rengine
+        install_allinoneplatform
         ;;
-    'sn1per')
-        install_sn1per
-        ;;
-    'xrdp')
+    'ui')
         install_xrdp
-        ;;
-    'emag')
-        install_emagent
-        ;;
-    'gitminer')
-        install_gitminer
         ;;
     'scan')
         install_scan

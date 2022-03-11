@@ -10,5 +10,4 @@ echo "${RED}${HIGHLIGHT}Script Running On the Remote Server Now ${NC}"
 
 # data pipeline
 
-# 
-rsync -chavzP -e "ssh -o StrictHostKeyChecking=no" ${AMIUSED}@${newip}:~/data/ .logs/output
+# TODO: local sync and remote sync process

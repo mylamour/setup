@@ -37,9 +37,9 @@ resource "aws_instance" "testecs" {
   //   destination = "${var.configdir['remote}"
   // }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo bash /tmp/init" ,
-    ]
-  }
+  // provisioner "remote-exec" {
+  //   inline = [
+  //     "sudo bash /tmp/init" ,
+  //   ]
+  // }
 }
