@@ -12,7 +12,12 @@ install_dict() {
     git clone https://github.com/1N3/IntruderPayloads &
     git clone https://github.com/Bo0oM/fuzz.txt &
     git clone https://github.com/gh0stkey/Web-Fuzzing-Box &
+    git clone https://github.com/payloadbox/xxe-injection-payload-list &
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
+}
+
+install_bounty_domain(){
+    echo "Get Bounty Domains"
 }
 
 install_scan(){
@@ -32,6 +37,10 @@ install_scan(){
     echo "[Info]: Starting to install dirsearch"
     git clone https://github.com/maurosoria/dirsearch.git
     pip3 install -q -r dirsearch/requirements.txt
+    
+    echo "[Info]: Starting to install dirdar"
+    wget -q -O DirDar.zip https://github.com/M4DM0e/DirDar/releases/download/v1.0.0/DirDarV1.0-linux64.zip
+    unzip DirDar.zip && sudo mv releases/dirdar /usr/local/bin
 
     echo "[Info]: Starting to install whatwaf"
     git clone https://github.com/Ekultek/WhatWaf/
@@ -41,6 +50,12 @@ install_scan(){
     git clone https://github.com/Tuhinshubhra/CMSeeK
     pip3 install -q -r CMSeeK/requirements.txt
 
+    echo "[Info]: Starting to install XSStrike"
+    git clone https://github.com/s0md3v/XSStrike
+    pip3 install -q -r XSStrike/requirements.txt
+
+    # git clone https://github.com/epsylon/xsser
+    # sudo apt-get install -y python3-pycurl python3-bs4 python3-geoip python3-gi python3-cairocffi python3-selenium firefoxdriver
 
     echo "[Info]: Starting to install naabu"
     sudo apt install -y libpcap-dev
@@ -48,6 +63,31 @@ install_scan(){
     unzip naabu.zip && sudo mv naabu /usr/local/bin/
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
 
+}
+
+install_fuzz(){
+    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+    wget -q -O ffuf.tar.gz https://github.com/ffuf/ffuf/releases/download/v1.3.1/ffuf_1.3.1_linux_amd64.tar.gz
+    sudo mv ffuf /usr/local/bin/
+    echo "${GREEN}[Succeed]${NC}: Installed Successful"
+}
+
+install_dataleak(){
+    rm -rf dataleak
+    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+    
+    mkdir -p dataleak && cd dataleak
+    python3 -m venv leakenv && source leakenv/bin/activate 
+
+    git clone https://github.com/UnkL4b/GitMiner
+    pip3 install -q -r GitMiner/requirements.txt
+    
+    git clone https://github.com/wuseman/EMAGNET && chmod +x EMAGNET/emagnet.sh
+    
+    git clone https://github.com/jordanpotti/AWSBucketDump
+    pip3 install -q -r AWSBucketDump/requirements.txt
+    
+    echo "${GREEN}[Succeed]${NC}: Installed Successful"
 }
 
 isntall_toolx(){
@@ -59,42 +99,42 @@ isntall_toolx(){
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
 }
 
-install_nuclei() {
-    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
-    wget -q -O nuclei_2.6.2_linux_amd64.zip https://github.com/projectdiscovery/nuclei/releases/download/v2.6.2/nuclei_2.6.2_linux_amd64.zip
-    unzip nuclei_2.6.2_linux_amd64.zip -d nuclei
-    cd nuclei && git clone https://github.com/projectdiscovery/nuclei-templates &
-    echo "${GREEN}[Succeed]${NC}: Installed Successful"
-}
-
-install_rengine() {
+install_allinoneplatform() {
     # rengine was all in one platform
+    mkdir -p ~/allinoneplatform
+    cd allinoneplatform
+    
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+
+    echo "[Info]: Starting to install rengine"
+    # will install docker automatically
     git clone https://github.com/yogeshojha/rengine && cd rengine
-    chmod +x ./install.shell && sudo ./install.sh
+    chmod +x ./install.sh && sudo ./install.sh
+    # use  ·make username· to create user
+    echo "[Info]: Starting to install sn1per"
+    docker pull xer0dayz/sn1per
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
 }
 
-install_zap() {
+install_proxy() {
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+    echo "[Info]: Starting to install zap }"
+
+    # need java runtime
     wget -q -O zap.tar.gz https://github.com/zaproxy/zaproxy/releases/download/v2.11.1/ZAP_2.11.1_Linux.tar.gz
     tar -xf zap.tar.gz
-    echo "${GREEN}[Succeed]${NC}: Installed Successful"
+    if ! command -v java &>/dev/null; then
+        echo "[Warning] java env not found, let's install"
+        sudo bash /tmp/runtime java
+    fi
 
-}
-
-install_hetty() {
-    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+    echo "[Info]: Starting to install hetty }"
     wget -q -O hetty.tar.gz https://github.com/dstotijn/hetty/releases/download/v0.6.0/hetty_0.6.0_Linux_x86_64.tar.gz
     tar -xf hetty.tar.gz
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
+
 }
 
-install_gitminer() {
-    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
-    git clone https://github.com/UnkL4b/GitMiner && cd GitMiner && pip3 install -q -r requirements.txt >/dev/null
-    echo "${GREEN}[Succeed]${NC}: Installed Successful"
-}
 
 install_xrdp() {
     # TODO: need to test and change xrdp password and change root password
@@ -114,34 +154,6 @@ install_xrdp() {
 
     # sudo mv /root/xorg.conf.new /etc/X11/xorg.conf
     # docker run -p 0.0.0.0:6080:80 -e USER=doro -e PASSWORD=password -v /dev/shm:/dev/shm dorowu/ubuntu-desktop-lxde-vnc:focal
-}
-
-install_sn1per() {
-    # include many tools, eg. nuclei
-    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
-    # echo "${RED}PLEASE KEEP WAITING,IT'S WOULD TAKE LONG TIME...ABOUT 18min ${NC}:"
-    # git clone https://github.com/1N3/Sn1per && cd Sn1per
-    # chmod +x install.sh && bash install.sh
-    docker pull xer0dayz/sn1per
-    mkdir -p ~/sn1per
-    alias sniper="docker run -it xer0dayz/sn1per /bin/bash"
-    echo "${GREEN}[Succeed]${NC}: Installed Successful"
-
-    # docker pull xer0dayz/sn1per
-    # docker run -it xer0dayz/sn1per /bin/bash
-}
-
-install_emagent() {
-    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
-    git clone https://github.com/wuseman/EMAGNET && cd EMAGNET && chmod +x EMAGNET/emagnet.sh
-    # bash emagnet/emagnet.sh --emagnet
-    echo "${GREEN}[Succeed]${NC}: Installed Successful"
-}
-
-install_osms() {
-    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
-    docker pull
-    # docker run -it --rm -v osmws:/root/.osmedeus/workspaces j3ssie/osmedeus:latest scan -f fast -t $DOMAINNAME
 }
 
 if [ ! -z ${1} ]; then

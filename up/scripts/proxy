@@ -11,7 +11,7 @@ install_proxy() {
 
 qr_code() {
     if ! command -v qrencode &>/dev/null; then
-        echo "[Warning] qrencode could not be found, let's install"
+        echo "[Warning] qrencode not found, let's install"
         sudo apt install qrencode >/dev/null
     fi
 

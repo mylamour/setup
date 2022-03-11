@@ -46,6 +46,8 @@ scan_pipeline() {
 
 fuzz_pipeline() {
     echo "FUZZ TASK"
+
+    # ffuf  -w fuzz.txt -u FUZZ -mc all -fs 42 -c -v
 }
 
 if [ ! -z ${1} ]; then
