@@ -26,8 +26,11 @@ scan_pipeline() {
         fi
 
         if [ ! -f ~/mdata/$domainname/$domainname.lists.urlswithstatus ]; then
-            echo "3. url path check"
-            cd ~/scantools/dirsearch/ && python3 dirsearch.py --url-list ~/mdata/$domainname/$domainname.lists.domain --output ~/mdata/$domainname/$domainname.lists.urlswithstatus >/dev/null
+            # echo "3. url path check with dirsearch"
+            # cd ~/scantools/dirsearch/ && python3 dirsearch.py --url-list ~/mdata/$domainname/$domainname.lists.domain --output ~/mdata/$domainname/$domainname.lists.urlswithstatus >/dev/null
+            echo "3. url path check with dirmap"
+            cd ~/scantools/dirsearch/ && python3 dirmap.py -iF ~/mdata/$domainname/$domainname.lists.domain -lcf >/dev/null
+    
 
         fi
         if [ ! -f ~/mdata/$domainname/$domainname.lists.wafcheck ]; then
@@ -36,6 +39,9 @@ scan_pipeline() {
             cat ~/mdata/$domainname/$domainname.lists.urlswithstatus | awk '{print $3}' >~/mdata/$domainname/$domainname.lists.urls
             cd ~/scantools/WhatWaf/ && python3 whatwaf --list ~/mdata/$domainname/$domainname.lists.urls --output ~/mdata/$domainname/$domainname.lists.wafcheck
         fi
+
+        # vuln scan
+        # nmap -sV --script=vulscan/vulscan.nse www.example.com
 
         # echo "5. cms detection"
         # cd ~/scantools/CMSeeK/ && python3 cmseek.py --list ~/mdata/$domainname/$domainname.lists.urls

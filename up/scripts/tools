@@ -8,7 +8,7 @@ BASEDIR="/home/ubuntu/"
 
 install_dict() {
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
-    mkdir -p dict && cd dict
+    cd dict
     git clone https://github.com/1N3/IntruderPayloads &
     git clone https://github.com/Bo0oM/fuzz.txt &
     git clone https://github.com/gh0stkey/Web-Fuzzing-Box &
@@ -22,10 +22,9 @@ install_bounty_domain(){
 
 install_scan(){
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
-    rm -rf scantools
 
     echo "[Info]: Starting to install subDomainsBrute"
-    mkdir -p scantools && cd scantools
+    cd scantools
     python3 -m venv scanenv && source scanenv/bin/activate 
     pip3 install aiodns # for subDomainBrute
     git clone https://github.com/lijiejie/subDomainsBrute
@@ -37,6 +36,10 @@ install_scan(){
     echo "[Info]: Starting to install dirsearch"
     git clone https://github.com/maurosoria/dirsearch.git
     pip3 install -q -r dirsearch/requirements.txt
+    
+    echo "[Info]: Starting to install dirmap"
+    git clone https://github.com/H4ckForJob/dirmap.git
+    pip3 install -q -r dirmap/requirement.txt
     
     echo "[Info]: Starting to install dirdar"
     wget -q -O DirDar.zip https://github.com/M4DM0e/DirDar/releases/download/v1.0.0/DirDarV1.0-linux64.zip
@@ -54,8 +57,14 @@ install_scan(){
     git clone https://github.com/s0md3v/XSStrike
     pip3 install -q -r XSStrike/requirements.txt
 
+    echo "[Info]: Starting to install vulscan"
+    git clone https://github.com/scipag/vulscan scipag_vulscan
+    sudo ln -s `pwd`/scipag_vulscan /usr/share/nmap/scripts/vulscan    
     # git clone https://github.com/epsylon/xsser
     # sudo apt-get install -y python3-pycurl python3-bs4 python3-geoip python3-gi python3-cairocffi python3-selenium firefoxdriver
+
+    echo "[Info]: Starting to install is-website-vulnerable"
+    sudo docker pull lirantal/is-website-vulnerable:latest
 
     echo "[Info]: Starting to install naabu"
     sudo apt install -y libpcap-dev
@@ -73,10 +82,9 @@ install_fuzz(){
 }
 
 install_dataleak(){
-    rm -rf dataleak
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
     
-    mkdir -p dataleak && cd dataleak
+    cd dataleak
     python3 -m venv leakenv && source leakenv/bin/activate 
 
     git clone https://github.com/UnkL4b/GitMiner
@@ -90,8 +98,12 @@ install_dataleak(){
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
 }
 
-isntall_toolx(){
+isntall_toolx(){    
+    echo "[Info]: Starting to install offensive-docker"
+    sudo docker pull aaaguirrep/offensive-docker
+    
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+
     git clone https://github.com/rajkumardusad/Tool-X.git
     cd Tool-X
     chmod +x install
@@ -99,15 +111,15 @@ isntall_toolx(){
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
 }
 
-install_allinoneplatform() {
+install_platform() {
     # rengine was all in one platform
-    mkdir -p ~/allinoneplatform
     cd allinoneplatform
     
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
 
     echo "[Info]: Starting to install rengine"
     # will install docker automatically
+    sudo rm -rf rengine
     git clone https://github.com/yogeshojha/rengine && cd rengine
 
     authpass=$(pwgen -s -1 18)
@@ -115,19 +127,25 @@ install_allinoneplatform() {
 
     sed -i "s/AUTHORITY_PASSWORD=.*/AUTHORITY_PASSWORD=$authpass/g" .env
     sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$pgpass/g" .env
+    sed -i '/make username/d' install.sh
 
     chmod +x ./install.sh && sudo ./install.sh
 
-    # sudo docker stop rengine_web_1
-    # sudo docker exec -i rengine_db_1 psql -U rengine postgres -c "DROP DATABASE rengine;"
-    # sudo docker exec -i rengine_db_1 psql -U rengine postgres -c "CREATE DATABASE rengine;"
-    # cat /tmp/rengine_dump_.sql | sudo docker exec -i rengine_db_1 psql -U rengine -d rengine
-    # rm /tmp/rengine_dump_.sql
-
+    # If have backup file, then restore 
+    if [ -f '/tmp/rengine_dump.sql' ]; then
+        echo "[Info]: Starting to restore data"
+        sudo docker stop rengine_web_1
+        sudo docker exec -i rengine_db_1 psql -U rengine postgres -c "DROP DATABASE rengine;"
+        sudo docker exec -i rengine_db_1 psql -U rengine postgres -c "CREATE DATABASE rengine;"
+        cat /tmp/rengine_dump.sql | sudo docker exec -i rengine_db_1 psql -U rengine -d rengine
+        # rm /tmp//tmp/rengine.sql
+        sudo make build 
+        sudo make up
+    fi
 
     # use  ·make username· to create user
     echo "[Info]: Starting to install sn1per"
-    sudo docker pull xer0dayz/sn1per
+    sudo docker pull xer0dayz/sn1per 
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
 }
 
@@ -154,6 +172,24 @@ install_proxy() {
 
 }
 
+install_osint(){
+
+    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+
+    echo "[Info]: Starting to install ghunt"
+    git clone https://github.com/mxrch/ghunt
+}
+
+install_mobsf(){
+    echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+
+    git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
+    # cd Mobile-Security-Framework-MobSF
+    # sudo docker build -t mobsf .
+    # sudo docker run -it --rm -p 8000:8000 mobsf 
+
+    echo "${GREEN}[Succeed]${NC}: Installed Successful"
+}
 
 install_xrdp() {
     # TODO: need to test and change xrdp password and change root password
@@ -190,14 +226,20 @@ if [ ! -z ${1} ]; then
     'proxy')
         install_proxy
         ;;
-    'leak')
+    'toolx')
+        isntall_toolx
+        ;;
+    'dataleak')
         install_dataleak
         ;;
-    'rengine')
-        install_allinoneplatform
+    'platform')
+        install_platform
         ;;
-    'ui')
+    'xrdp')
         install_xrdp
+        ;;
+    'mobsf')
+        install_mobsf
         ;;
     'scan')
         install_scan
@@ -209,26 +251,3 @@ if [ ! -z ${1} ]; then
         ;;
     esac
 fi
-
-# if [ ! -z ${1} ]
-# then
-
-#     if [ "${1}" = "init" ]; then
-#         install_dict
-#     fi;
-
-#     if [ "${1}" = "zap" ]; then
-#         install_zap
-#     fi;
-
-#     if [ "${1}" = "nuclei" ]; then
-#         install_dict
-#     fi;
-
-#     if [ "${1}" = "rengine" ]; then
-#         install_rengine
-#     fi;
-
-# else
-#     sudo ${*:1}
-# fi

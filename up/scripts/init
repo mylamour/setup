@@ -19,6 +19,8 @@ echo "${RED}${HIGHLIGHT}Script Running On the Remote Server Now ${NC}"
 # sudo service sshd restart
 # echo "${GREEN}[Info]${NC}: SSH Services Configured"
 
+mkdir -p allinoneplatform mdata scantools dict dataleak fuzz
+
 # Hide login banner
 touch ~/.hushlogin
 
@@ -31,7 +33,8 @@ sudo sed -i '$ a export YELLOW=$(tput setaf 3 -T linux)' /etc/profile
 sudo sed -i '$ a export NC=$(tput sgr0 -T linux)' /etc/profile
 sudo sed -i '$ a export HIGHLIGHT=$(tput setab 7 -T linux)' /etc/profile
 
-sudo sed -i '$ a export PATH=$PATH:~/.local/bin' ~/.bashrc
+sed -i '$ a export PATH=$PATH:~/.local/bin' /home/ubuntu/.bashrc
+sed -i '$ a alias offensive="sudo docker run --rm -it -v ~/offensivecloud/:/offensive --name offensive-cloud aaaguirrep/offensive-docker /bin/zsh"' /home/ubuntu/.bashrc
 
 source /etc/profile
 
@@ -39,7 +42,7 @@ echo "${GREEN}[Info]${NC}: Modified Successful"
 # Install Building Essential and Basic Tools
 echo "[Info]: Starting to install essential"
 sudo apt-get update >/dev/null 2>&1
-sudo apt-get install -y build-essential sshpass htop curl pwngen tmux git unzip lynx python3.8-venv pandoc python3 python3-pip python3-tqdm >/dev/null 2>&1
+sudo apt-get install -y build-essential jq sshpass nmap htop curl pwgen tmux git unzip lynx python3.8-venv pandoc python3 python3-pip python3-tqdm >/dev/null 2>&1
 curl -s https://rclone.org/install.sh | sudo bash >/dev/null 2>&1
 echo "${GREEN}[Succeed]${NC}: Installed Successful"
 
