@@ -4,8 +4,8 @@ variable "region" {
 
 variable "instancetype" {
     default = "t2.medium"
-    // t2.micro 1c1g 0.012$/hr
-    // t2.medium 2c4g 0.046$/hr suggested for kali
+    // t2.micro 1c1g 0.0152$/hr
+    // t2.medium 2c4g 0.0608$/hr suggested for kali
     // t2.xlarge 4c16g 0.186$/hr
 }
 

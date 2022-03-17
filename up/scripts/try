@@ -2,51 +2,46 @@
 
 echo "${RED}${HIGHLIGHT}Script Running On the Remote Server Now ${NC}"
 
-# Focused on Workflow
-scan_pipeline() {
+assets_pipeline() {
     mkdir -p ~/mdata/$domainname
     # find sub domain & path
     if [ ! -d "scantools" ]; then
         echo "${RED}${HIGHLIGHT}[Warning]${NC}: your tools folder was not exists, please use $(./start.sh -m tools scan) to initialize it"
         exit 1
     else
-        source ~/scantools/scanenv/bin/activate
-        echo "${GREEN}[Info]${NC}: Scan Environment Activated"
-        echo "Domain: $domainname"
         if [ ! -f ~/mdata/$domainname/$domainname.lists.ips ]; then
-            echo "1. get sub domain"
+            echo "+Assests"
             cd ~/scantools/subDomainsBrute && python3 subDomainsBrute.py --w --full $domainname --output ~/mdata/$domainname/$domainname.lists.domainswithip
             cat ~/mdata/$domainname/$domainname.lists.domainswithip | awk '{print $1}' >~/mdata/$domainname/$domainname.lists.domain
             cat ~/mdata/$domainname/$domainname.lists.domainswithip | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | uniq >~/mdata/$domainname/$domainname.lists.ips
         fi
-
-        if [ ! -f ~/mdata/$domainname/$domainname.lists.ports ]; then
-            echo "2. port scan"
-            cat ~/mdata/$domainname/$domainname.lists.ips | sudo naabu >~/mdata/$domainname/$domainname.lists.ports
-        fi
-
-        if [ ! -f ~/mdata/$domainname/$domainname.lists.urlswithstatus ]; then
-            # echo "3. url path check with dirsearch"
-            # cd ~/scantools/dirsearch/ && python3 dirsearch.py --url-list ~/mdata/$domainname/$domainname.lists.domain --output ~/mdata/$domainname/$domainname.lists.urlswithstatus >/dev/null
-            echo "3. url path check with dirmap"
-            cd ~/scantools/dirsearch/ && python3 dirmap.py -iF ~/mdata/$domainname/$domainname.lists.domain -lcf >/dev/null
-    
-
-        fi
-        if [ ! -f ~/mdata/$domainname/$domainname.lists.wafcheck ]; then
-
-            echo "4. waf detection"
-            cat ~/mdata/$domainname/$domainname.lists.urlswithstatus | awk '{print $3}' >~/mdata/$domainname/$domainname.lists.urls
-            cd ~/scantools/WhatWaf/ && python3 whatwaf --list ~/mdata/$domainname/$domainname.lists.urls --output ~/mdata/$domainname/$domainname.lists.wafcheck
-        fi
-
-        # vuln scan
-        # nmap -sV --script=vulscan/vulscan.nse www.example.com
-
-        # echo "5. cms detection"
-        # cd ~/scantools/CMSeeK/ && python3 cmseek.py --list ~/mdata/$domainname/$domainname.lists.urls
-
     fi
+}
+
+# Focused on Workflow
+scan_pipeline() {
+
+    source ~/scantools/scanenv/bin/activate
+    echo "${GREEN}[Info]${NC}: Scan Environment Activated"
+    echo "Domain: $domainname"
+
+    cat ~/mdata/$domainname/$domainname.lists.ips | sudo naabu >~/mdata/$domainname/$domainname.lists.ports
+    nmap -sV --script=vulscan/vulscan.nse 
+
+    echo "3. url path check with dirsearch"
+    cd ~/scantools/dirsearch/ && python3 dirsearch.py --url-list ~/mdata/$domainname/$domainname.lists.domain --output ~/mdata/$domainname/$domainname.lists.urlswithstatus >/dev/null
+    # echo "3. url path check with dirmap"
+    # cd ~/scantools/dirsearch/ && python3 dirmap.py -iF ~/mdata/$domainname/$domainname.lists.domain -lcf >/dev/null
+
+    # echo "4. waf detection"
+    # cat ~/mdata/$domainname/$domainname.lists.urlswithstatus | awk '{print $3}' >~/mdata/$domainname/$domainname.lists.urls
+    # cd ~/scantools/WhatWaf/ && python3 whatwaf --list ~/mdata/$domainname/$domainname.lists.urls --output ~/mdata/$domainname/$domainname.lists.wafcheck
+
+    # vuln scan
+
+    # echo "5. cms detection"
+    # cd ~/scantools/CMSeeK/ && python3 cmseek.py --list ~/mdata/$domainname/$domainname.lists.urls
+
     # WAF  detection
 }
 

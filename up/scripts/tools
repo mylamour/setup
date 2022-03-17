@@ -60,6 +60,11 @@ install_scan(){
     echo "[Info]: Starting to install vulscan"
     git clone https://github.com/scipag/vulscan scipag_vulscan
     sudo ln -s `pwd`/scipag_vulscan /usr/share/nmap/scripts/vulscan    
+
+    echo "[Info]: Starting to install XrayScan"
+    wget -q -O xray.zip https://github.com/chaitin/xray/releases/download/1.8.4/xray_linux_amd64.zip
+    unzip xray.zip
+    sudo mv xray_linux_amd64 /usr/local/bin/xray
     # git clone https://github.com/epsylon/xsser
     # sudo apt-get install -y python3-pycurl python3-bs4 python3-geoip python3-gi python3-cairocffi python3-selenium firefoxdriver
 
@@ -70,6 +75,23 @@ install_scan(){
     sudo apt install -y libpcap-dev
     wget -q -O naabu.zip https://github.com/projectdiscovery/naabu/releases/download/v2.0.5/naabu_2.0.5_linux_amd64.zip
     unzip naabu.zip && sudo mv naabu /usr/local/bin/
+    
+    echo "[Info]: Starting to install fuploider（upload scan)"
+    git clone https://github.com/almandin/fuxploider
+    pip install -r fuxploider/requirements.txt
+
+    echo "[Info]: Starting to install Corsy(cors scan)"
+    git clone https://github.com/s0md3v/Corsy
+    pip install -r Corsy/requirements.txt
+
+    echo "[Info]: Starting to install log4j scan"
+    git clone https://github.com/fullhunt/log4j-scan
+    pip install -r log4j-scan/requirements.txt
+
+    echo "[Info]: Starting to install rapid scan"
+    git clone https://github.com/skavngr/rapidscan
+
+
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
 
 }
