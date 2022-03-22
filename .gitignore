@@ -19,3 +19,4 @@ TODO
 configs/tgbot
 *.sql
 domains.yml
+lambda.tf

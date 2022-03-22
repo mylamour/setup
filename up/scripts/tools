@@ -153,22 +153,22 @@ install_platform() {
 
     chmod +x ./install.sh && sudo ./install.sh
 
-    # If have backup file, then restore 
+    # # If have backup file, then restore 
     if [ -f '/tmp/rengine_dump.sql' ]; then
         echo "[Info]: Starting to restore data"
         sudo docker stop rengine_web_1
         sudo docker exec -i rengine_db_1 psql -U rengine postgres -c "DROP DATABASE rengine;"
         sudo docker exec -i rengine_db_1 psql -U rengine postgres -c "CREATE DATABASE rengine;"
         cat /tmp/rengine_dump.sql | sudo docker exec -i rengine_db_1 psql -U rengine -d rengine
-        # rm /tmp//tmp/rengine.sql
+        sudo docker exec -i rengine_db_1 psql -U rengine postgres -c "ALTER USER rengine PASSWORD '${pgpass}';"
         sudo make build 
         sudo make up
     fi
 
-    # use  ·make username· to create user
-    echo "[Info]: Starting to install sn1per"
-    sudo docker pull xer0dayz/sn1per 
-    echo "${GREEN}[Succeed]${NC}: Installed Successful"
+    # # use  ·make username· to create user
+    # echo "[Info]: Starting to install sn1per"
+    # sudo docker pull xer0dayz/sn1per 
+    # echo "${GREEN}[Succeed]${NC}: Installed Successful"
 }
 
 install_proxy() {
@@ -186,6 +186,8 @@ install_proxy() {
         echo "[Warning] java env not found, let's install"
         sudo bash /tmp/runtime java
     fi
+
+    sudo docker run -d -p 8899:8899 -p 8081:8081 -v /var/www/scylla:/var/www/scylla wildcat/scylla:latest
 
     echo "[Info]: Starting to install hetty"
     wget -q -O hetty.tar.gz https://github.com/dstotijn/hetty/releases/download/v0.6.0/hetty_0.6.0_Linux_x86_64.tar.gz
@@ -218,11 +220,14 @@ install_xrdp() {
     # NOTE: 2c/4g at least , extreme slowly
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
     sudo apt-get update
-    sudo apt-get install xubuntu-desktop xfce4 xfce4-goodies xrdp xfconf tasksel
-    sudo adduser xrdp ssl-cert && sudo systemctl restart xrdp
+    sudo apt-get install -y xfce4 xfce4-goodies xrdp xfconf
+    sudo adduser xrdp ssl-cert
+    sudo systemctl restart xrdp
     echo "startxfce4" > ~/.Xsession
     chmod +x ~/.Xsession
     sudo systemctl restart xrdp.service
+
+    # echo 'user:passwd' | sudo chpasswd
     # there was a script wget https://www.c-nergy.be/downloads/xrdp-installer-1.2.2.zip
     # printf '2\n' | sudo apt-get install -y ubuntu-desktop 
     #  use lightdm

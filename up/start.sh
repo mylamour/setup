@@ -27,7 +27,7 @@ usage() {
     echo "Usage: $0 [options]"
     echo "Available options:"
     echo "  --destroy                    destroy infra"
-    echo "  -h, --help                       prints this"
+    echo "  -h, --help                   prints this"
     echo "  -s, --shell                  enter shell"
     echo "  -m, --module XXX             work with module"
   ) 1>&2

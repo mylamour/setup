@@ -2,6 +2,11 @@ variable "region" {
     default = "ap-northeast-1"
 }
 
+variable "num_proxies" {
+  type    = number
+  default = 10
+}
+
 variable "instancetype" {
     default = "t2.medium"
     // t2.micro 1c1g 0.0152$/hr
