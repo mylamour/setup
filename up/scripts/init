@@ -42,7 +42,7 @@ echo "${GREEN}[Info]${NC}: Modified Successful"
 # Install Building Essential and Basic Tools
 echo "[Info]: Starting to install essential"
 sudo apt-get update >/dev/null 2>&1
-sudo apt-get install -y build-essential jq sshpass nmap htop curl pwgen tmux git unzip lynx firefox python3.8-venv pandoc python3 python3-pip python3-tqdm >/dev/null 2>&1
+sudo apt-get install -y build-essential jq xvfb sshpass nmap htop curl pwgen tmux git unzip lynx firefox python3.8-venv pandoc python3 python3-pip python3-tqdm >/dev/null 2>&1
 curl -s https://rclone.org/install.sh | sudo bash >/dev/null 2>&1
 echo "${GREEN}[Succeed]${NC}: Installed Successful"
 

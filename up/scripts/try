@@ -26,7 +26,7 @@ scan_pipeline() {
     echo "Domain: $domainname"
 
     cat ~/mdata/$domainname/$domainname.lists.ips | sudo naabu >~/mdata/$domainname/$domainname.lists.ports
-    nmap -sV --script=vulscan/vulscan.nse 
+    nmap -sV --script=vulscan/vulscan.nse
 
     echo "3. url path check with dirsearch"
     cd ~/scantools/dirsearch/ && python3 dirsearch.py --url-list ~/mdata/$domainname/$domainname.lists.domain --output ~/mdata/$domainname/$domainname.lists.urlswithstatus >/dev/null
@@ -46,8 +46,16 @@ scan_pipeline() {
 }
 
 fuzz_pipeline() {
-    echo "FUZZ TASK"
-
+    echo "[Info]: Starting to fuzz"
+    if [ ! -f ~/fuzz/prefs.js ]; then
+        echo "${RED}${HIGHLIGHT}[Error]${NC}: fuzz tools was not installed, please run `./start.sh -m tools fuzz`"
+        exit 1
+    fi
+    cd ~/fuzz
+    source fuzzenv/bin/activate
+    nohup python3 -m grizzly ./browsers/firefox/firefox do-ma --xvfb &
+    
+    echo "${GREEN}[Succeed]${NC}: Runing in background"
     # ffuf  -w fuzz.txt -u FUZZ -mc all -fs 42 -c -v
 }
 
@@ -56,6 +64,9 @@ if [ ! -z ${1} ]; then
     'scan')
         domainname=${2}
         scan_pipeline
+        ;;
+    'fuzz')
+        fuzz_pipeline
         ;;
     *)
         echo "${RED}${HIGHLIGHT}[Error]${NC}: $1 was not included"

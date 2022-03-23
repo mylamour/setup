@@ -33,7 +33,7 @@ cd setup/up && terraform init
 `./start.sh -m tgbot`
 
 5. install tools
-`./start.sh -m tools `
+`./start.sh -m tools [toolsname]`
 
 
 

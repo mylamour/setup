@@ -98,9 +98,48 @@ install_scan(){
 
 install_fuzz(){
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
+
+    cd ~/fuzz
+    rm -rf ./*
+
+    python3 -m venv fuzzenv
+    source fuzzenv/bin/activate
+    
+    echo "[Info]: Starting to install ffuf"
+
     wget -q -O ffuf.tar.gz https://github.com/ffuf/ffuf/releases/download/v1.3.1/ffuf_1.3.1_linux_amd64.tar.gz
+    tar -xf ffuf.tar.gz
     sudo mv ffuf /usr/local/bin/
+    
+    # echo "[Info]: Starting to install Peach"
+    # sudo apt-get -y install libxml2-dev libxslt1-dev lib32z1-dev
+    # git clone --depth 1 https://github.com/mozillasecurity/peach
+    # git clone --depth 1 https://github.com/mozillasecurity/fuzzdata
+    # mv fuzzdata peach
+    # pip3 install -q -r peach/requirements.txt
+
+    echo "[Info]: Starting to install Grizzly"
+    pip3 install -q ffpuppet fuzzfetch 
+    pip3 install -q grizzly-framework
+
+    mkdir browsers
+    python3 -m fuzzfetch --asan --name firefox --fuzzing -o ./browsers/
+
+    python3 -m pip install prefpicker --user
+    python3 -m prefpicker browser-fuzzing.yml ~/fuzz/prefs.js
+
+    echo "[Info]: Starting to install domato"
+    git clone https://github.com/googleprojectzero/domato
+
+    mkdir domato_adapter
+    wget -q -O domato_adapter/domato.py https://gist.githubusercontent.com/mylamour/375aaa58ff302e48f6e1881013dd6094/raw/898d20c984f442bc31e02dd7962248a2a95f32d6/domato.py
+    wget -q -O domato_adapter/setup.py https://gist.githubusercontent.com/mylamour/375aaa58ff302e48f6e1881013dd6094/raw/57674bbd38379799525460f81a4406f1940e8ea5/setup.py
+
+    python3 -m pip install -e domato_adapter
+
+    install_dict
     echo "${GREEN}[Succeed]${NC}: Installed Successful"
+
 }
 
 install_dataleak(){
@@ -246,6 +285,9 @@ if [ ! -z ${1} ]; then
             eval $i
         done
 
+        ;;
+    'fuzz')
+        install_fuzz
         ;;
     'dict')
         install_dict
