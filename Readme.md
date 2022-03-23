@@ -16,7 +16,7 @@ git clone https://github.com/mylamour/setup
 cd setup/up && terraform init
 ```
 
-## Useage
+## Usage
 
 [![asciicast](https://asciinema.org/a/Q2Ao0WRRZRDQuZ6YXVzggud4V.svg)](https://asciinema.org/a/Q2Ao0WRRZRDQuZ6YXVzggud4V)
 
@@ -35,6 +35,8 @@ cd setup/up && terraform init
 5. install tools
 `./start.sh -m tools [toolsname]`
 
+6. working with pipeline
+`./start.sh -m try fuzz`
 
 
 # Resources

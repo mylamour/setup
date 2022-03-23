@@ -53,7 +53,7 @@ fuzz_pipeline() {
     fi
     cd ~/fuzz
     source fuzzenv/bin/activate
-    nohup python3 -m grizzly ./browsers/firefox/firefox do-ma --xvfb &
+    nohup python3 -m grizzly ./browsers/firefox/firefox do-ma --xvfb & >/dev/null
     
     echo "${GREEN}[Succeed]${NC}: Runing in background"
     # ffuf  -w fuzz.txt -u FUZZ -mc all -fs 42 -c -v
