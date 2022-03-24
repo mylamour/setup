@@ -48,7 +48,7 @@ scan_pipeline() {
 fuzz_pipeline() {
     echo "[Info]: Starting to fuzz"
     if [ ! -f ~/fuzz/prefs.js ]; then
-        echo "${RED}${HIGHLIGHT}[Error]${NC}: fuzz tools was not installed, please run `./start.sh -m tools fuzz`"
+        echo "${RED}${HIGHLIGHT}[Error]${NC}: fuzz tools was not installed, please run ./start.sh -m tools fuzz"
         exit 1
     fi
     cd ~/fuzz

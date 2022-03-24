@@ -8,7 +8,7 @@ BASEDIR="/home/ubuntu/"
 
 install_dict() {
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
-    cd dict
+    cd ~/dict
     git clone https://github.com/1N3/IntruderPayloads &
     git clone https://github.com/Bo0oM/fuzz.txt &
     git clone https://github.com/gh0stkey/Web-Fuzzing-Box &
@@ -119,13 +119,16 @@ install_fuzz(){
     # pip3 install -q -r peach/requirements.txt
 
     echo "[Info]: Starting to install Grizzly"
-    pip3 install -q ffpuppet fuzzfetch 
-    pip3 install -q grizzly-framework
+    pip3 install wheel 
+    pip3 install ffpuppet fuzzfetch 
+
+    git clone https://github.com/MozillaSecurity/grizzly.git grizzly
+    python3 -m pip install -e grizzly
 
     mkdir browsers
     python3 -m fuzzfetch --asan --name firefox --fuzzing -o ./browsers/
 
-    python3 -m pip install prefpicker --user
+    pip3 install -q prefpicker
     python3 -m prefpicker browser-fuzzing.yml ~/fuzz/prefs.js
 
     echo "[Info]: Starting to install domato"
@@ -145,7 +148,7 @@ install_fuzz(){
 install_dataleak(){
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
     
-    cd dataleak
+    cd ~/dataleak
     python3 -m venv leakenv && source leakenv/bin/activate 
 
     git clone https://github.com/UnkL4b/GitMiner
@@ -174,7 +177,7 @@ isntall_toolx(){
 
 install_platform() {
     # rengine was all in one platform
-    cd allinoneplatform
+    cd ~/allinoneplatform
     
     echo "[Info]: Starting to ${FUNCNAME[0]/_/ }"
 
